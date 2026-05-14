@@ -122,6 +122,29 @@ def main() -> None:
         render_page(env, tmpl, args.out / out_path,
                     endpoint="auth.login", user=None)
 
+    portal_ctx = {
+        "bills": [],
+        "tracked_bills": [],
+        "flags": {},
+        "opinions": {},
+        "categories": [],
+        "bill_flag_colors": [],
+        "upcoming_meetings": [],
+        "missing_opinions": [],
+        "form": None,
+    }
+
+    lobbyist_user = DemoUser.lobbyist()
+    for tmpl, endpoint, out_path in [
+        ("lobbyist/home.html",     "lobbyist_routes.home",     "lobbyist/index.html"),
+        ("lobbyist/table.html",    "lobbyist_routes.table",    "lobbyist/table/index.html"),
+        ("lobbyist/search.html",   "lobbyist_routes.search",   "lobbyist/search/index.html"),
+        ("lobbyist/bill.html",     "lobbyist_routes.bill",     "lobbyist/bill/index.html"),
+        ("lobbyist/settings.html", "lobbyist_routes.settings", "lobbyist/settings/index.html"),
+    ]:
+        render_page(env, tmpl, args.out / out_path,
+                    endpoint=endpoint, user=lobbyist_user, **portal_ctx)
+
     print("Done.")
 
 
