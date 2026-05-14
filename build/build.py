@@ -11,6 +11,8 @@ from build.writers import (
     write_bills, write_legislators, write_committees,
     write_organizations, write_opinions, write_demo_accounts,
 )
+from build.flask_shim import DemoUser
+from build.render import make_env, render_page
 
 
 def _real_user_names(tables: dict[str, list[dict]]) -> set[str]:
@@ -82,6 +84,17 @@ def main() -> None:
     seed = _load_seed(repo_root)
     write_demo_accounts(data_dir / "demo-accounts.json",
                         _build_demo_accounts_json(seed))
+
+    print(f"Rendering pages to {args.out}/...")
+    env = make_env()
+
+    landing_ctx = {
+        "h_count": sum(1 for b in clean.get("bill", []) if (b.get("bill_number") or "").startswith("H")),
+        "s_count": sum(1 for b in clean.get("bill", []) if (b.get("bill_number") or "").startswith("S")),
+    }
+    render_page(env, "index.html", args.out / "index.html",
+                endpoint="index", user=None, **landing_ctx)
+
     print("Done.")
 
 
