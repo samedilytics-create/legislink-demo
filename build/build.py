@@ -6,7 +6,10 @@ from pathlib import Path
 import yaml
 
 from build.dump_parser import parse_dump
-from build.sanitize import sanitize, fake_org_names
+from build.sanitize import (
+    sanitize, fake_org_names, fake_org_records,
+    synthesize_opinions, select_demo_bills,
+)
 from build.writers import (
     write_bills, write_legislators, write_committees,
     write_organizations, write_opinions, write_demo_accounts,
@@ -69,6 +72,16 @@ def main() -> None:
     clean = sanitize(tables, real_user_names=real_names)
     print(f"  Sanitized tables: {sorted(clean)}")
 
+    # Trim the bill set to keep the demo snappy. Drop bill_versions for any
+    # bills we just removed so writers don't include orphan rows.
+    full_bill_count = len(clean.get("bill", []))
+    clean["bill"] = select_demo_bills(clean.get("bill", []))
+    kept_ids = {b["id"] for b in clean["bill"]}
+    clean["bill_version"] = [
+        v for v in clean.get("bill_version", []) if v.get("bill_id") in kept_ids
+    ]
+    print(f"  Selected {len(clean['bill'])} of {full_bill_count} bills for the demo")
+
     data_dir = args.out / "data"
     print(f"Writing JSON to {data_dir}/...")
     write_bills(data_dir / "bills.json",
@@ -78,8 +91,14 @@ def main() -> None:
                      clean.get("committee", []),
                      clean.get("committee_meeting", []),
                      clean.get("committee_membership", []))
-    write_organizations(data_dir / "organizations.json", clean.get("organization", []))
-    write_opinions(data_dir / "opinions.json", clean.get("opinions", []))
+    # Replace the real organization list with the demo's fake-org pool so the
+    # legislator opinion bar resolves `fake-N` ids to readable display names.
+    write_organizations(data_dir / "organizations.json", fake_org_records())
+    # Synthesize opinions so every bill has 1..15 (10 bills intentionally empty).
+    synthetic_opinions = synthesize_opinions(clean.get("bill", []))
+    print(f"  Synthesized {len(synthetic_opinions)} opinions across "
+          f"{len({op['bill_id'] for op in synthetic_opinions})} bills")
+    write_opinions(data_dir / "opinions.json", synthetic_opinions)
 
     seed = _load_seed(repo_root)
     write_demo_accounts(data_dir / "demo-accounts.json",

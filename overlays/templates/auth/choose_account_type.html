@@ -6,20 +6,23 @@
 <div class="auth-page">
     <div class="auth-container">
         <div class="auth-header">
-            <h1>Get Started</h1>
-            <p>Choose how you'll use Legislink</p>
+            <h1>Try the Legislink Demo</h1>
+            <p>No sign-up required — pick a role to explore.</p>
         </div>
 
         <article class="auth-card">
-            <p class="demo-note">Demo mode — both options drop you into a pre-seeded account.</p>
-            <div class="account-type-options">
-                <a href="{{ url_for('auth.register') }}?as=lobbyist" class="btn-primary btn-full" style="margin-bottom: 0.75rem;">
-                    I'm a lobbyist or interest group
-                </a>
-                <a href="{{ url_for('auth.register') }}?as=legislator" class="btn-secondary btn-full">
-                    I'm a legislator or staffer
-                </a>
+            <div class="auth-role-buttons">
+                <button type="button" class="btn-primary auth-role-btn" data-demo-role="lobbyist">
+                    Try the Lobbyist Demo
+                </button>
+                <button type="button" class="btn-secondary auth-role-btn" data-demo-role="legislator">
+                    Try the Legislator Demo
+                </button>
             </div>
+            <p class="auth-role-note">
+                Both demos use mock data and reset when you clear browser storage.
+                Switching roles wipes the in-progress demo for the other side.
+            </p>
         </article>
     </div>
 </div>

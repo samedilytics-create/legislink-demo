@@ -44,8 +44,11 @@ def write_committees(
     payload = []
     for c in committees:
         out = dict(c)
-        out["members"] = mem_by_c.get(c["id"], [])
-        out["meetings"] = meet_by_c.get(c["id"], [])
+        # `committee.id` is the PK; meetings/memberships reference the
+        # committee's short code in `committee_id`. Join on the code.
+        key = c.get("committee_id") or c.get("id")
+        out["members"] = mem_by_c.get(key, [])
+        out["meetings"] = meet_by_c.get(key, [])
         payload.append(out)
     _write(path, payload)
 

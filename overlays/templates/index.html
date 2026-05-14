@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Legislink - Connect Interest Groups with Representatives{% endblock %}
+
+{% block styles %}
+<style>
+.landing-hero {
+  background-image: url("{{ url_for('static', filename='capitol picture.jpg') }}");
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Landing Page (demo) -->
+<div class="landing-page">
+    <!-- Hero Section -->
+    <section class="landing-hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Break Through The Noise</h1>
+            <p class="hero-subtitle">For interest groups and lobbyists who need a better way to share information and opinions with legislators</p>
+            <div class="hero-actions">
+                <button type="button" class="btn-primary" data-demo-role="lobbyist">Try the Lobbyist Demo</button>
+                <button type="button" class="btn-secondary" data-demo-role="legislator">Try the Legislator Demo</button>
+            </div>
+            <p class="hero-demo-note">No sign-up. Both demos use mock data and reset when you clear browser storage.</p>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="landing-features">
+        <div class="features-container">
+            <h2 class="section-title">The Bill Tracking Sheet That Connects You With The Hill</h2>
+            <div class="features-list">
+                <article class="feature-card">
+                    <div class="feature-image">
+                        <div class="feature-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Bill Tracking</h3>
+                        <p>Monitor legislation that matters to your organization. Track bills through every stage of the legislative process.</p>
+                    </div>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-image">
+                        <div class="feature-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Opinion Management</h3>
+                        <p>Submit and manage your organization's positions on legislation. Keep track of all stakeholder opinions in one place.</p>
+                    </div>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-image">
+                        <div class="feature-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Real-Time Updates</h3>
+                        <p>Stay informed with real-time updates on bill status, committee hearings, and legislative actions.</p>
+                    </div>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-image">
+                        <div class="feature-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Collaborative Platform</h3>
+                        <p>Connect with legislators and other organizations. Foster meaningful dialogue and collaboration.</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="landing-stats">
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number">{{ h_count }}</div>
+                <div class="stat-label">House Bills</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ s_count }}</div>
+                <div class="stat-label">Senate Bills</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ h_count + s_count }}</div>
+                <div class="stat-label">Total Legislation</div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

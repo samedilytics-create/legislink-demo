@@ -1,20 +1,38 @@
+/* Always render in the light Pico theme regardless of OS dark-mode preference. */
+:root { color-scheme: light; }
+html, body { background-color: #ebe9ed; color: #272727; }
+
+/* Sidebar hover sync: the sidebar itself transitions width over 0.3s, but the
+   header bar and the first content section have their margins changed via
+   `body:has(.sidebar:hover) …` rules that snap instantly. The mismatch reads
+   as "the sidebar moves twice". Add matching transitions so everything glides
+   together. */
+nav.container-fluid {
+    transition: margin-left 0.3s ease, width 0.3s ease;
+}
+.main-content section:first-of-type {
+    transition: margin-left 0.3s ease, margin-right 0.3s ease;
+}
+
 /* Demo banner — shown on every page until dismissed. */
 .demo-banner {
     position: sticky;
     top: 0;
     z-index: 1000;
     background: #0a3a82;
-    color: #fff;
+    color: #ffffff;
     text-align: center;
-    padding: 0.4rem 2.5rem 0.4rem 0.75rem;
-    font-size: 0.85rem;
+    padding: 0.55rem 3rem 0.55rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
     font-family: "Public Sans", system-ui, sans-serif;
     line-height: 1.4;
 }
 
 .demo-banner a {
-    color: #fff;
+    color: #ffffff;
     text-decoration: underline;
+    font-weight: 600;
 }
 
 .demo-banner-close {
@@ -22,25 +40,791 @@
     right: 0.5rem;
     top: 50%;
     transform: translateY(-50%);
+    width: 1.75rem;
+    height: 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: transparent;
     border: 0;
-    color: #fff;
-    font-size: 1.1rem;
-    cursor: pointer;
-    padding: 0 0.5rem;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 1.25rem;
     line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+}
+
+.demo-banner-close:hover,
+.demo-banner-close:focus {
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .demo-banner[hidden] {
     display: none;
 }
 
+/* Flash-message close button override.
+   Pico + style.css render the &times; centered in a 10%-wide button, which
+   floats the X visually toward the middle of the toast. Pin it to the right
+   edge with a fixed pixel size and right-aligned content. */
+.flash-toasts article.message :is(a, button)[rel="prev"],
+.flash-toasts button.close_message {
+    width: 1.75rem;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    margin-left: 0.5rem;
+    background-image: none;
+    background-color: transparent;
+    border: 0;
+    color: #272727;
+    font-size: 1.25rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+
+/* Auth page role buttons (replaces login/register/forgot forms in the demo) */
+.auth-role-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    margin: 0.5rem 0 1rem;
+}
+
+.auth-role-btn {
+    display: block;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    text-align: center;
+}
+
+.auth-role-btn.btn-primary {
+    background: #3d52d5;
+    color: #ffffff;
+    border-color: #3d52d5;
+}
+.auth-role-btn.btn-primary:hover { background: #2f43be; border-color: #2f43be; }
+
+.auth-role-btn.btn-secondary {
+    background: #ffffff;
+    color: #3d52d5;
+    border-color: #3d52d5;
+}
+.auth-role-btn.btn-secondary:hover { background: #f0f3fc; }
+
+.auth-role-note {
+    margin: 0.25rem 0 0;
+    font-size: 0.85rem;
+    color: #555;
+    line-height: 1.45;
+    text-align: center;
+}
+
+/* Landing page demo note under role buttons */
+.hero-demo-note {
+    margin: 1rem 0 0;
+    font-family: "Public Sans", sans-serif;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.85);
+}
+
 /* Auth-page demo helper text */
 .auth-form .demo-note {
-    background: #f4f7fd;
+    background: #eef3fc;
     border-left: 3px solid #0a3a82;
-    padding: 0.5rem 0.75rem;
+    padding: 0.65rem 0.85rem;
     margin: 0.5rem 0 1rem;
-    font-size: 0.8rem;
-    color: #345;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #1a2540;
 }
+
+.auth-form .demo-note a {
+    color: #0a3a82;
+    font-weight: 600;
+}
+
+/* --- Bill table (lobbyist/legislator portals) --- */
+.bills-table,
+.tracked-bills-table {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    color: #272727;
+}
+
+.bills-table thead th,
+.tracked-bills-table thead th {
+    background: #f4f6fa;
+    color: #272727;
+    font-family: "Public Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid #e0e0e0;
+    text-align: left;
+}
+
+.bills-table tbody td,
+.tracked-bills-table tbody td {
+    padding: 0.75rem 1rem;
+    font-family: "Public Sans", sans-serif;
+    font-size: 14px;
+    color: #272727;
+    border-bottom: 1px solid #ececec;
+    vertical-align: middle;
+}
+
+.bills-table tbody tr:hover,
+.tracked-bills-table tbody tr:hover {
+    background: #fafbfd;
+}
+
+.bills-table a,
+.tracked-bills-table a {
+    color: #3d52d5;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.bills-table a:hover,
+.tracked-bills-table a:hover {
+    text-decoration: underline;
+}
+
+/* --- Flag indicators (matches the original site) --- */
+.flag-cell {
+    white-space: nowrap;
+}
+
+.flag-indicators {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.flag-picker-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    margin: 0;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    opacity: 0.55;
+    transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.flag-picker-btn:hover {
+    opacity: 1;
+    color: #3d52d5;
+}
+
+.flag-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.flag-dot:hover {
+    transform: scale(1.15);
+}
+
+/* --- Flag picker modal --- */
+.flag-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.flag-modal-overlay[data-open="true"] {
+    display: flex;
+}
+
+.flag-modal-content {
+    background: #ffffff;
+    color: #272727;
+    border-radius: 8px;
+    width: min(480px, calc(100vw - 2rem));
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+}
+
+.flag-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #ececec;
+}
+
+.flag-modal-header h3 {
+    margin: 0;
+    font-family: "Public Sans", sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #272727;
+}
+
+.flag-modal-close {
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: #555;
+    font-size: 1.4rem;
+    line-height: 1;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flag-modal-close:hover {
+    background: #f0f0f0;
+}
+
+.flag-modal-body {
+    padding: 1rem 1.25rem 1.25rem;
+}
+
+.flag-modal-body .flag-modal-bill-number {
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 0.75rem;
+}
+
+.flag-modal-body .flag-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 1rem;
+}
+
+.flag-modal-body .flag-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    color: #272727;
+}
+
+.flag-modal-body .flag-checkbox-label:hover {
+    background-color: #f5f5f5;
+}
+
+.flag-modal-body .flag-checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    margin: 0;
+    accent-color: #3d52d5;
+}
+
+.flag-modal-body .flag-color-preview {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.flag-modal-body .flag-label {
+    font-size: 14px;
+}
+
+.flag-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.flag-modal-actions button {
+    padding: 0.4rem 0.85rem;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.flag-modal-actions .btn-secondary {
+    background: #ffffff;
+    border: 1px solid #c9d0e0;
+    color: #272727;
+}
+
+.flag-modal-actions .btn-primary {
+    background: #3d52d5;
+    border: 1px solid #3d52d5;
+    color: #ffffff;
+}
+
+/* --- Subjects column: truncate to one line with ellipsis --- */
+.bills-table .subjects-cell,
+.tracked-bills-table .subjects-cell {
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #555;
+    font-size: 13px;
+    cursor: default;
+}
+
+/* --- Track checkbox --- */
+.bills-table .track-cell,
+.tracked-bills-table .track-cell {
+    text-align: center;
+    width: 60px;
+}
+
+.track-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 4px;
+    margin: 0;
+}
+
+.track-checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    margin: 0;
+    accent-color: #3d52d5;
+}
+
+/* --- Note button + modal --- */
+.note-btn {
+    background: none;
+    border: 0;
+    cursor: pointer;
+    padding: 2px;
+    margin: 0;
+    width: 26px;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    opacity: 0.6;
+    border-radius: 4px;
+    transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.note-btn:hover { opacity: 1; color: #3d52d5; background: #f0f3fc; }
+
+.note-btn.note-btn-has-note { opacity: 1; color: #3d52d5; }
+.note-btn.note-icon-strongly-oppose    { color: #dc3545; }
+.note-btn.note-icon-oppose-in-concept  { color: #b87784; }
+.note-btn.note-icon-neutral            { color: #c3a96f; }
+.note-btn.note-icon-endorse-in-concept { color: #43a047; }
+.note-btn.note-icon-strongly-endorse   { color: #2e7d32; }
+
+.note-modal-content { width: min(540px, calc(100vw - 2rem)); }
+
+.note-modal-form .note-modal-row { display: block; margin-bottom: 0.85rem; }
+.note-modal-form label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #272727;
+    margin-bottom: 0.3rem;
+}
+.note-modal-form select,
+.note-modal-form textarea {
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+.note-modal-form textarea { resize: vertical; min-height: 7rem; }
+
+/* --- Opinion bars (legislator) --- */
+.opinion-cell { min-width: 180px; vertical-align: middle; }
+.opinion-bar-empty { color: #999; font-style: italic; font-size: 12px; }
+
+.opinion-bar-wrapper { position: relative; }
+.opinion-bar {
+    height: 12px;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+}
+.opinion-segment {
+    height: 12px;
+    transition: opacity 0.15s ease;
+}
+.opinion-segment:hover { opacity: 0.8; }
+.opinion-segment.strongly-oppose    { background-color: #dc3545; }
+.opinion-segment.oppose-in-concept  { background-color: #dfa8b0; }
+.opinion-segment.neutral            { background-color: #e8dcc4; }
+.opinion-segment.endorse-in-concept { background-color: #bde0bf; }
+.opinion-segment.strongly-endorse   { background-color: #43a047; }
+
+.opinion-tooltip {
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.92);
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: "Public Sans", sans-serif;
+    z-index: 3000;
+    display: none;
+    max-width: 300px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+}
+.opinion-tooltip.show { display: block; }
+.opinion-tooltip .tooltip-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+.opinion-tooltip .tooltip-count { font-size: 11px; opacity: 0.8; margin-bottom: 6px; }
+.opinion-tooltip .tooltip-orgs { font-size: 11px; line-height: 1.5; }
+.opinion-tooltip .tooltip-more { font-size: 10px; opacity: 0.7; font-style: italic; margin-top: 4px; }
+
+/* --- Bill detail page --- */
+.bill-detail {
+    background: #ffffff;
+    color: #272727;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    padding: 1.75rem 2rem;
+    margin-top: 0.5rem;
+}
+
+.bill-detail-header { border-bottom: 1px solid #ececec; padding-bottom: 1rem; margin-bottom: 1.25rem; }
+
+.bill-detail-title {
+    margin: 0 0 0.5rem;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 1.85rem;
+    font-weight: 600;
+    color: #272727;
+    line-height: 1.25;
+}
+
+.bill-detail-number {
+    display: inline-block;
+    margin-right: 0.5rem;
+    color: #3d52d5;
+    font-weight: 700;
+}
+
+.bill-detail-meta {
+    margin: 0;
+    color: #444;
+    font-size: 0.95rem;
+}
+
+.bill-detail-meta strong { color: #272727; font-weight: 600; }
+
+.bill-detail-link { margin: 0.5rem 0 0; font-size: 0.9rem; }
+.bill-detail-link a { color: #3d52d5; font-weight: 600; }
+
+.bill-detail-section { margin-top: 1.5rem; }
+
+.bill-detail-section h2 {
+    margin: 0 0 0.5rem;
+    font-family: "Public Sans", sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #272727;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.bill-detail-description {
+    color: #272727;
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+
+.bill-detail-description p { margin: 0 0 0.6rem; }
+.bill-detail-description p:last-child { margin-bottom: 0; }
+
+.bill-description-list {
+    margin: 0.4rem 0 0;
+    padding-left: 1.4rem;
+    color: #272727;
+}
+.bill-description-list li {
+    margin-bottom: 0.35rem;
+    line-height: 1.55;
+}
+.bill-description-list li::marker { color: #3d52d5; }
+
+.bill-detail-description-empty {
+    margin: 0;
+    color: #888;
+    font-style: italic;
+}
+
+.bill-detail-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.5rem 0 1rem;
+}
+
+.bill-detail-bar-row .opinion-bar-wrapper { flex: 1; max-width: 360px; }
+
+.bill-detail-bar-count { color: #555; font-size: 0.85rem; }
+
+.bill-opinion-outer {
+    border: 1px solid #d8dbe6;
+    border-radius: 8px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.bill-opinion-outer-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    list-style: none;
+    color: #272727;
+    font-weight: 600;
+    font-size: 0.95rem;
+    background: #f4f6fa;
+}
+
+.bill-opinion-outer-summary::-webkit-details-marker { display: none; }
+
+.bill-opinion-outer-summary::before {
+    content: "▸";
+    color: #555;
+    font-size: 0.8rem;
+    transition: transform 0.15s ease;
+    display: inline-block;
+}
+
+.bill-opinion-outer[open] > .bill-opinion-outer-summary::before {
+    transform: rotate(90deg);
+}
+
+.bill-opinion-outer-count {
+    margin-left: auto;
+    background: #3d52d5;
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 1px 9px;
+    border-radius: 999px;
+    min-width: 1.5rem;
+    text-align: center;
+}
+
+.bill-opinion-outer > .bill-opinion-groups {
+    padding: 0.6rem 0.85rem 0.85rem;
+}
+
+.bill-opinion-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.bill-opinion-group {
+    border: 1px solid #ececec;
+    border-radius: 6px;
+    background: #fafbfd;
+    overflow: hidden;
+}
+
+.bill-opinion-group[open] {
+    background: #ffffff;
+}
+
+.bill-opinion-group-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.85rem;
+    cursor: pointer;
+    list-style: none;
+    color: #272727;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.bill-opinion-group-summary::-webkit-details-marker { display: none; }
+
+.bill-opinion-group-summary::before {
+    content: "▸";
+    color: #888;
+    font-size: 0.75rem;
+    transition: transform 0.15s ease;
+    display: inline-block;
+}
+
+.bill-opinion-group[open] > .bill-opinion-group-summary::before {
+    transform: rotate(90deg);
+}
+
+.bill-opinion-group-label { flex: 1; }
+
+.bill-opinion-group-count {
+    background: #f0f3fc;
+    color: #3d52d5;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 1px 8px;
+    border-radius: 999px;
+    min-width: 1.5rem;
+    text-align: center;
+}
+
+.bill-opinion-group .bill-opinion-list,
+.bill-opinion-group .bill-opinion-empty {
+    padding: 0.25rem 1rem 0.85rem 2.1rem;
+}
+
+.bill-opinion-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.bill-opinion-row {
+    border-top: 1px solid #ececec;
+    padding: 0.75rem 0;
+}
+
+.bill-opinion-row:first-child { border-top: 0; }
+
+.bill-opinion-row-head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.bill-opinion-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+}
+.bill-opinion-dot.strongly-oppose    { background: #dc3545; }
+.bill-opinion-dot.oppose-in-concept  { background: #dfa8b0; }
+.bill-opinion-dot.neutral            { background: #c3a96f; }
+.bill-opinion-dot.endorse-in-concept { background: #43a047; }
+.bill-opinion-dot.strongly-endorse   { background: #2e7d32; }
+
+.bill-opinion-org {
+    font-weight: 600;
+    color: #272727;
+    font-size: 0.95rem;
+}
+
+.bill-opinion-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #555;
+    background: #f4f6fa;
+    padding: 2px 8px;
+    border-radius: 999px;
+}
+
+.bill-opinion-action {
+    font-size: 0.8rem;
+    color: #3d52d5;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.bill-opinion-comment {
+    margin: 0.35rem 0 0;
+    color: #333;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.bill-opinion-empty,
+.bill-detail-empty {
+    color: #555;
+    font-style: italic;
+    padding: 0.5rem 0;
+}
+
+.bill-opinion-form { display: grid; gap: 0.85rem; max-width: 540px; }
+
+.bill-opinion-form-row { display: grid; gap: 0.3rem; }
+
+.bill-opinion-form-row > span {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #272727;
+}
+
+.bill-opinion-form-row select,
+.bill-opinion-form-row textarea {
+    padding: 0.55rem 0.7rem;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    color: #272727;
+    background: #ffffff;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.bill-opinion-form-row textarea { resize: vertical; min-height: 6rem; }
+
+.bill-opinion-form .btn-primary {
+    justify-self: start;
+    padding: 0.55rem 1.1rem;
+    background: #3d52d5;
+    color: #ffffff;
+    border: 0;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.bill-opinion-form .btn-primary:hover { background: #2f43be; }

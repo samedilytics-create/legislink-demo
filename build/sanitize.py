@@ -36,6 +36,26 @@ _FAKE_ORGS = [
     "Utah Education Alliance",
     "Wasatch Business Council",
     "Salt Lake Civic Trust",
+    "North Wasatch Coalition",
+    "Bonneville Reform Council",
+    "Cache Valley Voters",
+    "Provo Neighborhood Alliance",
+    "Iron County Trades Council",
+    "Greater Ogden Civic League",
+    "Capitol Reef Conservation Group",
+    "Utah Small Business Federation",
+    "Statewide Renters Association",
+    "Park City Open Lands Project",
+    "Dixie Ratepayers Coalition",
+    "Wasatch Front Transit Riders",
+    "Utah Library Defenders",
+    "Beehive Tech & Privacy Council",
+    "St. George Civic Roundtable",
+    "Davis County Parents Network",
+    "Utah Rural Health Association",
+    "Cottonwood Heights Civic Club",
+    "Sevier Valley Farmers Coalition",
+    "Greater Logan Workforce Alliance",
 ]
 
 
@@ -155,3 +175,157 @@ def sanitize(
 def fake_org_names() -> list[str]:
     """Public lookup table for writers/seed to resolve `demo-N` → display name."""
     return list(_FAKE_ORGS)
+
+
+# --- Bill selection ---------------------------------------------------------
+
+# Bills referenced by seed/demo-accounts.yaml. Always included so the seeded
+# tracked-bills lists on the portal home pages aren't broken.
+_SEED_BILL_NUMBERS = frozenset({"HB0001", "HB0142", "HB0220", "SB0003", "SB0042"})
+
+# Per-prefix quota; total ~102. Even House/Senate split, with a sprinkling of
+# joint, concurrent, and simple resolutions on each side so all bill kinds
+# show up in the demo.
+_PREFIX_QUOTAS = {
+    "HB": 40,
+    "SB": 40,
+    "HJR": 6,
+    "SJR": 6,
+    "HCR": 3,
+    "SCR": 3,
+    "HR": 2,
+    "SR": 2,
+}
+
+
+def _bill_prefix(bill_number: str) -> str:
+    return re.match(r"^([A-Za-z]+)", bill_number or "").group(1) if bill_number else ""
+
+
+def _bill_numeric(bill_number: str) -> int:
+    m = re.search(r"(\d+)", bill_number or "")
+    return int(m.group(1)) if m else 10**9
+
+
+def select_demo_bills(bills: list[dict]) -> list[dict]:
+    """Return a small demo-friendly subset of bills.
+
+    Always includes anything referenced by the seed; otherwise fills each
+    prefix's quota with the lowest-numbered bills of that prefix.
+    """
+    by_number = {b.get("bill_number"): b for b in bills if b.get("bill_number")}
+    selected: list[dict] = []
+    seen_numbers: set[str] = set()
+    for n in _SEED_BILL_NUMBERS:
+        b = by_number.get(n)
+        if b is not None:
+            selected.append(b)
+            seen_numbers.add(n)
+
+    from collections import defaultdict
+    by_prefix: dict[str, list[dict]] = defaultdict(list)
+    for b in bills:
+        bn = b.get("bill_number")
+        if not bn or bn in seen_numbers:
+            continue
+        p = _bill_prefix(bn)
+        if p in _PREFIX_QUOTAS:
+            by_prefix[p].append(b)
+
+    for prefix, quota in _PREFIX_QUOTAS.items():
+        seed_in_prefix = sum(1 for n in seen_numbers if _bill_prefix(n) == prefix)
+        remaining = max(0, quota - seed_in_prefix)
+        candidates = sorted(by_prefix[prefix], key=lambda b: _bill_numeric(b["bill_number"]))
+        selected.extend(candidates[:remaining])
+
+    return selected
+
+
+# --- Opinion synthesis ------------------------------------------------------
+
+_STANCES = [
+    "strongly_oppose",
+    "oppose_in_concept",
+    "neutral",
+    "support_in_concept",
+    "strongly_support",
+]
+_ACTIONS = [None, "yea", "nay", "amend", "hold"]
+_EMPTY_BILL_COUNT = 10
+_MIN_OPINIONS = 1
+_MAX_OPINIONS = 15
+
+
+def _seeded_random(seed_str: str):
+    """Return a random.Random seeded deterministically from a string."""
+    import random
+    return random.Random(seed_str)
+
+
+def fake_org_records() -> list[dict]:
+    """The fake-org list rendered as organization rows (for organizations.json)."""
+    return [
+        {
+            "id": f"fake-{i}",
+            "name": name,
+            "description": None,
+            "address": None,
+            "city": None,
+            "state": "UT",
+            "zip_code": None,
+            "phone": None,
+            "website": None,
+        }
+        for i, name in enumerate(_FAKE_ORGS)
+    ]
+
+
+def synthesize_opinions(bills: list[dict], *, seed: str = "legislink-demo-opinions") -> list[dict]:
+    """Build a synthetic opinions list so every bill has 1..15 opinions, except
+    a deterministic random subset of `_EMPTY_BILL_COUNT` bills that get none.
+
+    Each opinion uses a fake org id of the shape ``fake-N`` (matching
+    `fake_org_records()`), unique within a single bill so the legislator
+    opinion bar shows distinct organizations per segment.
+    """
+    import random
+    rng = _seeded_random(seed)
+    bill_ids = [b["id"] for b in bills if b.get("id") is not None]
+    if not bill_ids:
+        return []
+
+    empty_count = min(_EMPTY_BILL_COUNT, len(bill_ids))
+    empty_set = set(rng.sample(bill_ids, empty_count))
+
+    out: list[dict] = []
+    next_id = 1
+    org_pool_size = len(_FAKE_ORGS)
+    for bill_id in bill_ids:
+        if bill_id in empty_set:
+            continue
+        # Per-bill RNG so adding/removing bills upstream doesn't reshuffle the
+        # whole world.
+        per_bill_rng = _seeded_random(f"{seed}:{bill_id}")
+        target = per_bill_rng.randint(_MIN_OPINIONS, min(_MAX_OPINIONS, org_pool_size))
+        org_indices = per_bill_rng.sample(range(org_pool_size), target)
+        for oi in org_indices:
+            stance = per_bill_rng.choice(_STANCES)
+            action = per_bill_rng.choice(_ACTIONS)
+            comment_idx = per_bill_rng.randrange(len(_DEMO_COMMENTS))
+            out.append({
+                "id": str(next_id),
+                "bill_id": bill_id,
+                "user_id": f"fake-{oi}",
+                "user_org_id": f"fake-{oi}",
+                "bill_version": "0",
+                "opinion": stance,
+                "action": action,
+                "comments": _DEMO_COMMENTS[comment_idx],
+                "scraper_source": None,
+                "last_scraped_at": None,
+                "is_stale": "f",
+                "created_at": None,
+                "updated_at": None,
+            })
+            next_id += 1
+    return out

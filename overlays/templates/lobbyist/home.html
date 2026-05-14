@@ -7,28 +7,51 @@
 {% endblock %}
 
 {% block content %}
-<section class="dashboard-row" style="display: flex; flex-direction: column; gap: 1.5rem;">
-    <div class="dashboard-card dashboard-card-full tracked-bills-card"
-         style="flex-direction: column; align-items: stretch;">
-        <h2 style="margin-top: 0;">Tracked & Flagged Bills</h2>
-        <div class="tracked-bills-list" style="overflow-y: auto;">
-            <table class="tracked-bills-table" style="width: 100%; border-collapse: collapse;">
-                <thead>
-                    <tr>
-                        <th style="text-align:left;">Flag</th>
-                        <th style="text-align:left;">Bill</th>
-                        <th style="text-align:left;">Title</th>
-                        <th style="text-align:left;">Sponsor</th>
-                        <th style="text-align:left;">Subjects</th>
-                        <th style="text-align:left;">Location</th>
-                        <th style="text-align:left;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="bill-table-body">
-                </tbody>
-            </table>
-            <p id="bill-table-empty" hidden>No tracked or flagged bills yet. Use the
-                <a href="/lobbyist/table/">Bills</a> page to track some.</p>
+<section>
+    <div class="dashboard-grid lobbyist-dashboard">
+        <div class="dashboard-card agenda-card" style="flex-direction: column; align-items: stretch; justify-content: flex-start;">
+            <div class="card-header" style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 1rem;">
+                <h3 class="card-title" style="margin: 0;">Agendas</h3>
+                <select id="agenda-select"
+                        style="font-family: 'Public Sans', sans-serif; font-size: 14px; color: #272727; padding: 0.4rem 0.7rem; margin-left: 24px; border: 1px solid #d0d0d0; border-radius: 6px; background: #fff; cursor: pointer;">
+                    <option value="">Select an agenda</option>
+                </select>
+            </div>
+            <div class="agenda-bills-list" style="flex: 1; overflow-y: auto; min-height: 200px; max-height: 380px;">
+                <p class="agenda-placeholder" style="color: #666; font-size: 14px; margin: 0; min-height: 180px; display: flex; align-items: center; justify-content: center;">Select an agenda</p>
+            </div>
+        </div>
+
+        <div class="dashboard-card upcoming-card" style="flex-direction: column; align-items: stretch; justify-content: flex-start;">
+            <div class="card-header" style="margin-bottom: 1rem;">
+                <h3 class="card-title" style="margin: 0;">Upcoming Meetings</h3>
+            </div>
+            <div class="upcoming-items-list" id="upcoming-items-list" style="flex: 1; overflow-y: auto;">
+                <p style="color: #666; font-size: 14px; margin: 0;">Loading…</p>
+            </div>
+        </div>
+
+        <div class="dashboard-card dashboard-card-full tracked-bills-card" style="flex-direction: column; align-items: stretch;">
+            <h2 style="margin-top: 0;">Tracked &amp; Flagged Bills</h2>
+            <div class="tracked-bills-list" style="overflow-y: auto;">
+                <table class="tracked-bills-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;">Flag</th>
+                            <th style="text-align:left;">Bill</th>
+                            <th style="text-align:left;">Title</th>
+                            <th style="text-align:left;">Sponsor</th>
+                            <th style="text-align:left;">Subjects</th>
+                            <th style="text-align:left;">Location</th>
+                            <th style="text-align:left;">Note</th>
+                            <th style="text-align:left;">Track</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bill-table-body"></tbody>
+                </table>
+                <p id="bill-table-empty" hidden>No tracked or flagged bills yet. Use the
+                    <a href="/lobbyist/table/">Bills</a> page to track some.</p>
+            </div>
         </div>
     </div>
 </section>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -103,6 +103,73 @@
         </div>
         {% endif %}
     </main>
+
+    {# Note modal — shared across portal pages #}
+    <div id="note-modal" class="flag-modal-overlay" data-open="false" role="dialog" aria-modal="true" aria-labelledby="note-modal-title">
+        <div class="flag-modal-content note-modal-content">
+            <div class="flag-modal-header">
+                <h3 id="note-modal-title">Internal Note</h3>
+                <button type="button" class="flag-modal-close" id="note-modal-close-btn" aria-label="Close">&times;</button>
+            </div>
+            <div class="flag-modal-body">
+                <p class="flag-modal-bill-number" id="note-modal-bill-number"></p>
+                <div class="note-modal-form">
+                    <div class="note-modal-row" id="note-modal-opinion-row" hidden>
+                        <label for="note-modal-opinion">Opinion</label>
+                        <select id="note-modal-opinion" name="opinion">
+                            <option value="">—</option>
+                            <option value="Strongly Oppose">Strongly Oppose</option>
+                            <option value="Oppose in Concept">Oppose in Concept</option>
+                            <option value="Neutral">Neutral</option>
+                            <option value="Endorse in Concept">Endorse in Concept</option>
+                            <option value="Strongly Endorse">Strongly Endorse</option>
+                        </select>
+                    </div>
+                    <div class="note-modal-row">
+                        <label for="note-modal-text">Note</label>
+                        <textarea id="note-modal-text" name="note" rows="5" placeholder="Add an internal note about this bill..."></textarea>
+                    </div>
+                </div>
+                <div class="flag-modal-actions">
+                    <button type="button" class="btn-secondary" id="note-modal-cancel-btn">Cancel</button>
+                    <button type="button" class="btn-primary" id="note-modal-save-btn">Save Note</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Flag picker modal — shared across portal pages so demo-hydrate.js can open it #}
+    <div id="flag-picker-modal" class="flag-modal-overlay" data-open="false" role="dialog" aria-modal="true" aria-labelledby="flag-modal-title">
+        <div class="flag-modal-content">
+            <div class="flag-modal-header">
+                <h3 id="flag-modal-title">Manage Flags</h3>
+                <button type="button" class="flag-modal-close" id="flag-modal-close-btn" aria-label="Close">&times;</button>
+            </div>
+            <div class="flag-modal-body">
+                <p class="flag-modal-bill-number" id="flag-modal-bill-number"></p>
+                <div class="flag-picker-grid">
+                    {% for color_num, color_name in [(1, 'Red'), (2, 'Yellow'), (3, 'Green'), (4, 'Blue'), (5, 'Purple'), (6, 'Black')] %}
+                    <label class="flag-checkbox-label">
+                        <input type="checkbox" data-flag-color="{{ color_num }}">
+                        <span class="flag-color-preview flag-color-{{ color_num }}">
+                            <span class="flag-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="3" y="2" width="2" height="20" fill="currentColor"/>
+                                    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" fill="currentColor"/>
+                                </svg>
+                            </span>
+                        </span>
+                        <span class="flag-label">{{ color_name }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                <div class="flag-modal-actions">
+                    <button type="button" class="btn-secondary" id="flag-modal-cancel-btn">Cancel</button>
+                    <button type="button" class="btn-primary" id="flag-modal-save-btn">Save Flags</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% if current_user.is_authenticated %}

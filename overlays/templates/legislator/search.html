@@ -10,10 +10,19 @@
 <header style="margin-bottom: 1rem;"><h1>Search Bills</h1></header>
 <input type="search" id="bill-table-search" placeholder="Search by number, title, sponsor..."
        style="width: 100%; max-width: 480px;">
+<p id="bill-table-search-status" style="font-size: 0.85rem; color: #666; margin: 0.5rem 0 0;"></p>
 <table class="bills-table" style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
     <thead>
         <tr>
-            <th>Bill</th><th>Title</th><th>Sponsor</th><th>Location</th>
+            <th>Flag</th>
+            <th>Bill</th>
+            <th>Title</th>
+            <th>Sponsor</th>
+            <th>Subjects</th>
+            <th>Location</th>
+            <th>Note</th>
+            <th>Opinion</th>
+            <th>Track</th>
         </tr>
     </thead>
     <tbody id="bill-table-body"></tbody>

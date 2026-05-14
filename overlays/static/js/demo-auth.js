@@ -13,7 +13,31 @@ function go(account) {
     window.location.href = account === "legislator" ? "/legislator/" : "/lobbyist/";
 }
 
+async function startDemo(account) {
+    // If they're already in this role, preserve their session/changes.
+    const current = state.get().session;
+    if (!current || current.account !== account) {
+        try {
+            const seed = await fetch("/data/demo-accounts.json").then(r => r.json());
+            const profile = seed && seed[account];
+            state.seedAndSignIn(account, profile);
+        } catch (err) {
+            console.warn("demo-auth: seed load failed; signing in without seed", err);
+            state.signIn(account);
+        }
+    }
+    window.location.href = account === "legislator" ? "/legislator/" : "/lobbyist/";
+}
+
 export function attachAuth() {
+    // Landing-page role buttons (no login required)
+    document.querySelectorAll('[data-demo-role]').forEach(btn => {
+        btn.addEventListener("click", e => {
+            e.preventDefault();
+            startDemo(btn.dataset.demoRole === "legislator" ? "legislator" : "lobbyist");
+        });
+    });
+
     const login = document.getElementById("demo-login-form");
     if (login) {
         login.addEventListener("submit", e => {
