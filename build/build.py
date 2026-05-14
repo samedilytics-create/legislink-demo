@@ -85,6 +85,24 @@ def main() -> None:
     write_demo_accounts(data_dir / "demo-accounts.json",
                         _build_demo_accounts_json(seed))
 
+    print("Copying static assets...")
+    static_dst = args.out / "static"
+    if static_dst.exists():
+        shutil.rmtree(static_dst)
+    shutil.copytree(
+        repo_root.parent / "Legislink-2026-backup" / "app" / "static",
+        static_dst,
+    )
+    overlay_static = repo_root / "overlays" / "static"
+    if overlay_static.exists():
+        for p in overlay_static.rglob("*"):
+            if p.is_file():
+                rel = p.relative_to(overlay_static)
+                dst = static_dst / rel
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(p, dst)
+    print(f"  static/ has {sum(1 for _ in static_dst.rglob('*') if _.is_file())} files")
+
     print(f"Rendering pages to {args.out}/...")
     env = make_env()
 
