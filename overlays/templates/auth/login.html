@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In - Legislink{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>Welcome Back</h1>
+            <p>Sign in to your Legislink account</p>
+        </div>
+
+        <article class="auth-card">
+            <form id="demo-login-form" class="auth-form" autocomplete="off">
+                <p class="demo-note">
+                    Demo mode — any email signs you in. Use any email containing
+                    "legislator" to view the legislator portal; anything else
+                    drops you into the lobbyist portal. Data resets when you
+                    clear browser storage.
+                </p>
+
+                <div class="form-group">
+                    <label for="demo-email">Email</label>
+                    <input type="email" id="demo-email" name="email" required placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
+                    <label for="demo-password">Password</label>
+                    <input type="password" id="demo-password" name="password" placeholder="Anything works in demo mode">
+                </div>
+
+                <button type="submit" class="btn-primary btn-full">Sign In</button>
+            </form>
+
+            <div class="auth-footer">
+                <p><a href="{{ url_for('auth.forgot_password') }}">Forgot your password?</a></p>
+                <p>Don't have an account? <a href="{{ url_for('auth.register') }}">Register here</a></p>
+            </div>
+        </article>
+    </div>
+</div>
+{% endblock %}
