@@ -26,3 +26,40 @@ def test_dropped_tables_full_list():
     full_input["bill"] = []
     out = sanitize(full_input)
     assert set(out.keys()) == {"bill"}
+
+
+def test_opinion_comments_replaced():
+    opinions = [
+        {"id": "1", "bill_id": "100", "user_id": "5", "user_org_id": "9",
+         "comments": "Real lobbyist comment", "opinion": "support"},
+    ]
+    out = sanitize({"opinions": opinions, "bill": []})
+    assert out["opinions"][0]["comments"] != "Real lobbyist comment"
+    assert out["opinions"][0]["comments"]  # not empty
+
+
+def test_opinion_user_id_remapped():
+    opinions = [
+        {"id": "1", "bill_id": "100", "user_id": "5", "user_org_id": "9",
+         "comments": "x", "opinion": "support"},
+    ]
+    out = sanitize({"opinions": opinions, "bill": []})
+    assert out["opinions"][0]["user_org_id"].startswith("demo-")
+
+
+def test_opinion_remapping_is_deterministic():
+    opinions = [
+        {"id": "1", "user_org_id": "9", "comments": "x", "opinion": "s"},
+        {"id": "2", "user_org_id": "9", "comments": "x", "opinion": "s"},
+        {"id": "3", "user_org_id": "12", "comments": "x", "opinion": "s"},
+    ]
+    out = sanitize({"opinions": opinions, "bill": []})
+    assert out["opinions"][0]["user_org_id"] == out["opinions"][1]["user_org_id"]
+    assert out["opinions"][0]["user_org_id"] != out["opinions"][2]["user_org_id"]
+
+
+def test_notes_table_is_replaced_with_empty_list():
+    """Real notes are dropped; fabricated demo notes are injected later from seed."""
+    notes = [{"id": "1", "user_id": "5", "note": "real note", "bill_id": "100"}]
+    out = sanitize({"notes": notes, "bill": []})
+    assert out["notes"] == []
