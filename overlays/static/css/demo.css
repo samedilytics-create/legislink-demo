@@ -1,0 +1,46 @@
+/* Demo banner — shown on every page until dismissed. */
+.demo-banner {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #0a3a82;
+    color: #fff;
+    text-align: center;
+    padding: 0.4rem 2.5rem 0.4rem 0.75rem;
+    font-size: 0.85rem;
+    font-family: "Public Sans", system-ui, sans-serif;
+    line-height: 1.4;
+}
+
+.demo-banner a {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.demo-banner-close {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: 0;
+    color: #fff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0 0.5rem;
+    line-height: 1;
+}
+
+.demo-banner[hidden] {
+    display: none;
+}
+
+/* Auth-page demo helper text */
+.auth-form .demo-note {
+    background: #f4f7fd;
+    border-left: 3px solid #0a3a82;
+    padding: 0.5rem 0.75rem;
+    margin: 0.5rem 0 1rem;
+    font-size: 0.8rem;
+    color: #345;
+}
