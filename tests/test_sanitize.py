@@ -63,3 +63,31 @@ def test_notes_table_is_replaced_with_empty_list():
     notes = [{"id": "1", "user_id": "5", "note": "real note", "bill_id": "100"}]
     out = sanitize({"notes": notes, "bill": []})
     assert out["notes"] == []
+
+
+import pytest
+from build.sanitize import SecretLeak
+
+
+def test_email_in_sanitized_output_raises():
+    tables = {"bill": [{"id": "1", "sponsor": "Rep. someone@example.com"}]}
+    with pytest.raises(SecretLeak, match="email"):
+        sanitize(tables, real_user_names=set())
+
+
+def test_password_substring_raises():
+    tables = {"bill": [{"id": "1", "sponsor": "SECRET_KEY value"}]}
+    with pytest.raises(SecretLeak):
+        sanitize(tables, real_user_names=set())
+
+
+def test_real_user_name_raises():
+    tables = {"bill": [{"id": "1", "title": "Bill about Alice Stevens"}]}
+    with pytest.raises(SecretLeak, match="user name"):
+        sanitize(tables, real_user_names={"Alice Stevens"})
+
+
+def test_clean_input_passes():
+    tables = {"bill": [{"id": "1", "title": "School Funding Amendments"}]}
+    out = sanitize(tables, real_user_names={"Alice Stevens"})
+    assert out["bill"][0]["title"] == "School Funding Amendments"

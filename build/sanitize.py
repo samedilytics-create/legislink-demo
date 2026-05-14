@@ -1,5 +1,6 @@
 """PII sanitization. Build-time only, never runs in CI."""
 from __future__ import annotations
+import re
 from copy import deepcopy
 
 # Tables that contain user-private data and are dropped wholesale.
@@ -18,9 +19,6 @@ DROPPED_TABLES = frozenset({
     "alembic_version",
 })
 
-# Curated commentary used to replace real opinion comments. Cycled
-# deterministically by opinion id so a given bill's discussion stays
-# coherent across reloads.
 _DEMO_COMMENTS = [
     "Strong support — aligns with our policy priorities.",
     "Concerned about the implementation timeline for smaller districts.",
@@ -41,6 +39,21 @@ _FAKE_ORGS = [
 ]
 
 
+class SecretLeak(RuntimeError):
+    """Raised when the post-sanitize scan finds something it shouldn't."""
+
+
+_EMAIL_RE = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
+
+_DENYLIST = (
+    "SECRET_KEY",
+    "POSTGRES_PASSWORD",
+    "RESEND_API_KEY",
+    "re_HFAZBHEM",
+    "*SnIc62-540-3044",
+)
+
+
 def _fake_org_for(real_id):
     if real_id is None:
         return None
@@ -55,7 +68,32 @@ def _replace_comment(opinion_id):
     return _DEMO_COMMENTS[idx]
 
 
-def sanitize(tables: dict[str, list[dict]]) -> dict[str, list[dict]]:
+def _scan(tables: dict[str, list[dict]], real_user_names: set[str]) -> None:
+    for table, rows in tables.items():
+        for row in rows:
+            for col, val in row.items():
+                if not isinstance(val, str):
+                    continue
+                if _EMAIL_RE.search(val):
+                    raise SecretLeak(
+                        f"email-shaped string in {table}.{col} (id={row.get('id')})"
+                    )
+                for needle in _DENYLIST:
+                    if needle in val:
+                        raise SecretLeak(
+                            f"denylisted substring '{needle}' in {table}.{col}"
+                        )
+                for name in real_user_names:
+                    if name and name in val:
+                        raise SecretLeak(
+                            f"real user name '{name}' in {table}.{col} (id={row.get('id')})"
+                        )
+
+
+def sanitize(
+    tables: dict[str, list[dict]],
+    real_user_names: set[str] | None = None,
+) -> dict[str, list[dict]]:
     """Return a sanitized copy of `tables`."""
     tables = deepcopy(tables)
     for t in DROPPED_TABLES:
@@ -71,6 +109,7 @@ def sanitize(tables: dict[str, list[dict]]) -> dict[str, list[dict]]:
     if "notes" in tables:
         tables["notes"] = []
 
+    _scan(tables, real_user_names or set())
     return tables
 
 
