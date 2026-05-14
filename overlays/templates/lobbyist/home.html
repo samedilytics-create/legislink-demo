@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Legislink{% endblock %}
+
+{% block sidebar %}
+    {% include "includes/lobbyist_sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="dashboard-row" style="display: flex; flex-direction: column; gap: 1.5rem;">
+    <div class="dashboard-card dashboard-card-full tracked-bills-card"
+         style="flex-direction: column; align-items: stretch;">
+        <h2 style="margin-top: 0;">Tracked & Flagged Bills</h2>
+        <div class="tracked-bills-list" style="overflow-y: auto;">
+            <table class="tracked-bills-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="text-align:left;">Flag</th>
+                        <th style="text-align:left;">Bill</th>
+                        <th style="text-align:left;">Title</th>
+                        <th style="text-align:left;">Sponsor</th>
+                        <th style="text-align:left;">Subjects</th>
+                        <th style="text-align:left;">Location</th>
+                        <th style="text-align:left;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="bill-table-body">
+                </tbody>
+            </table>
+            <p id="bill-table-empty" hidden>No tracked or flagged bills yet. Use the
+                <a href="/lobbyist/table/">Bills</a> page to track some.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Search - Legislink{% endblock %}
+
+{% block sidebar %}
+    {% include "includes/lobbyist_sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+<header style="margin-bottom: 1rem;"><h1>Search Bills</h1></header>
+<input type="search" id="bill-table-search" placeholder="Search by number, title, sponsor..."
+       style="width: 100%; max-width: 480px;">
+<table class="bills-table" style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+    <thead>
+        <tr>
+            <th>Bill</th><th>Title</th><th>Sponsor</th><th>Location</th>
+        </tr>
+    </thead>
+    <tbody id="bill-table-body"></tbody>
+</table>
+{% endblock %}
