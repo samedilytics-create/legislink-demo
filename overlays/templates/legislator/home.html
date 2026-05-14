@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Legislink{% endblock %}
+
+{% block sidebar %}
+    {% include "includes/legislator_sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="dashboard-row" style="display: flex; flex-direction: column; gap: 1.5rem;">
+    <div class="dashboard-card dashboard-card-full tracked-bills-card">
+        <h2 style="margin-top: 0;">My Bills</h2>
+        <p style="font-size:0.85rem;color:#666;">Bills you sponsor, co-sponsor, or have tracked.</p>
+        <table class="tracked-bills-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="text-align:left;">Flag</th>
+                    <th style="text-align:left;">Bill</th>
+                    <th style="text-align:left;">Title</th>
+                    <th style="text-align:left;">Sponsor</th>
+                    <th style="text-align:left;">Subjects</th>
+                    <th style="text-align:left;">Location</th>
+                    <th style="text-align:left;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="bill-table-body"></tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

@@ -145,6 +145,17 @@ def main() -> None:
         render_page(env, tmpl, args.out / out_path,
                     endpoint=endpoint, user=lobbyist_user, **portal_ctx)
 
+    legislator_user = DemoUser.legislator()
+    for tmpl, endpoint, out_path in [
+        ("legislator/home.html",     "legislator_routes.home",     "legislator/index.html"),
+        ("legislator/table.html",    "legislator_routes.table",    "legislator/table/index.html"),
+        ("legislator/search.html",   "legislator_routes.search",   "legislator/search/index.html"),
+        ("legislator/bill.html",     "legislator_routes.bill",     "legislator/bill/index.html"),
+        ("legislator/settings.html", "legislator_routes.settings", "legislator/settings/index.html"),
+    ]:
+        render_page(env, tmpl, args.out / out_path,
+                    endpoint=endpoint, user=legislator_user, **portal_ctx)
+
     print("Done.")
 
 
