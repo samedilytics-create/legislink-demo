@@ -120,3 +120,28 @@ def test_email_still_scanned_in_public_record_table():
     tables = {"legislator": [{"id": "100", "legislator_url": "mailto:foo@example.com"}]}
     with pytest.raises(SecretLeak, match="email"):
         sanitize(tables, real_user_names=set())
+
+
+def test_substring_does_not_false_positive():
+    """A username like 'hallen' must not match inside 'challenging'."""
+    tables = {"bill": [{"id": "1", "detailed_description": "This is a challenging issue."}]}
+    # Should not raise — `hallen` is inside `challenging`, not a standalone identifier.
+    out = sanitize(tables, real_user_names={"hallen"})
+    assert out["bill"][0]["detailed_description"] == "This is a challenging issue."
+
+
+def test_word_boundary_match_still_catches_real_appearance():
+    """Same username AS A STANDALONE WORD must still raise."""
+    import pytest
+    from build.sanitize import SecretLeak
+    tables = {"bill": [{"id": "1", "detailed_description": "User hallen reported this."}]}
+    with pytest.raises(SecretLeak, match="user name"):
+        sanitize(tables, real_user_names={"hallen"})
+
+
+def test_word_boundary_case_insensitive():
+    import pytest
+    from build.sanitize import SecretLeak
+    tables = {"bill": [{"id": "1", "title": "Doug Welton Memorial Bill"}]}
+    with pytest.raises(SecretLeak):
+        sanitize(tables, real_user_names={"doug welton"})  # lowercase match

@@ -85,6 +85,22 @@ def _replace_comment(opinion_id):
     return _DEMO_COMMENTS[idx]
 
 
+_NAME_RE_CACHE: dict[str, "re.Pattern[str]"] = {}
+
+
+def _compile_name_re(name: str) -> "re.Pattern[str]":
+    """Word-boundary, case-insensitive match for `name`.
+
+    Substring matching false-positives on common short usernames (`hallen`
+    matches inside `challenging`); word-boundary is the semantically correct
+    threat model — we care about a real identifier appearing as an identifier,
+    not as random letters inside a longer word.
+    """
+    pat = re.compile(rf"\b{re.escape(name)}\b", re.IGNORECASE)
+    _NAME_RE_CACHE[name] = pat
+    return pat
+
+
 def _scan(tables: dict[str, list[dict]], real_user_names: set[str]) -> None:
     for table, rows in tables.items():
         for row in rows:
@@ -107,7 +123,7 @@ def _scan(tables: dict[str, list[dict]], real_user_names: set[str]) -> None:
                 if (table, col) in _PUBLIC_RECORD_FIELDS:
                     continue
                 for name in real_user_names:
-                    if name and name in val:
+                    if name and _NAME_RE_CACHE.get(name, _compile_name_re(name)).search(val):
                         raise SecretLeak(
                             f"real user name '{name}' in {table}.{col} (id={row.get('id')})"
                         )
