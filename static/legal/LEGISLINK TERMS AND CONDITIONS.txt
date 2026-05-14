@@ -1,0 +1,65 @@
+LEGISLINK TERMS AND CONDITIONS
+Effective Date: 01/19/2026
+
+These Terms and Conditions (“Terms”) govern access to and use of the LegisLink platform (“Platform”), operated by LegisLink Ltd. Co., a Utah limited liability company (“LegisLink,” “we,” “us,” or “our”).
+
+By creating an account, accessing, or using the Platform, and by checking the acceptance box during registration, you agree to be legally bound by these Terms. If you do not agree, do not use the Platform.
+
+1. ACCEPTANCE AND ELECTRONIC CONSENT
+By checking the box indicating acceptance of these Terms and the Privacy Policy, you acknowledge that you have read, understand, and agree to be bound by them. This electronic acceptance constitutes a valid and enforceable agreement under the Utah Uniform Electronic Transactions Act.
+
+2. PLATFORM PURPOSE
+LegisLink provides legislative tracking, bill summaries, alerts, and related informational tools focused primarily on Utah legislation.
+
+The Platform is provided for informational purposes only. LegisLink does not provide legal advice, lobbying advice, compliance advice, or representation of any kind.
+
+3. UTAH LOBBYING AUTHORIZATION AND DISCLOSURE DISCLAIMER
+
+3.1 No Verification of Lobbying Status
+LegisLink does not verify whether any user is:
+- A registered lobbyist under Utah Code Title 36, Chapter 11
+- Authorized to lobby or act on behalf of any individual, organization, or interest group
+- In compliance with Utah lobbying registration, reporting, or disclosure requirements
+
+3.2 User Representations
+By entering, submitting, or associating information with any individual, organization, or group, you represent and warrant that:
+- You are legally authorized to act on behalf of that individual or entity; or
+- You are using the Platform solely for internal, informational, or analytical purposes
+
+You are solely responsible for determining and complying with all applicable Utah and federal lobbying, ethics, and disclosure laws.
+
+3.3 No Liability for Unauthorized Use
+LegisLink shall not be liable for any claim, investigation, penalty, or damages arising from:
+- Unauthorized representation of any individual or organization
+- Failure to register or disclose lobbying activity
+- Misrepresentation of authority or status by a user
+
+3.4 Indemnification (Lobbying-Related)
+You agree to indemnify and hold harmless LegisLink Ltd. Co., its members, managers, and employees from any claim, liability, penalty, or expense arising out of or related to your lobbying activities, disclosures, or representations made using the Platform.
+
+4. ACCOUNT RESPONSIBILITIES
+You are responsible for maintaining the confidentiality of your account credentials and for all activity conducted through your account. All information you provide must be accurate and current.
+
+5. USER-SUBMITTED INFORMATION
+You retain ownership of information you submit. By submitting information, you grant LegisLink a non-exclusive, royalty-free license to use that information to operate, improve, and enhance the Platform, including creating aggregated and anonymized legislative summaries and insights.
+
+6. INTELLECTUAL PROPERTY
+All Platform software, content, summaries, analyses, and designs are owned by or licensed to LegisLink and are protected by intellectual property laws. No ownership rights are transferred to users.
+
+7. DISCLAIMER OF WARRANTIES
+The Platform is provided “as is” and “as available.” LegisLink disclaims all warranties, express or implied, including warranties of accuracy, completeness, fitness for a particular purpose, and uninterrupted availability.
+
+8. LIMITATION OF LIABILITY
+To the maximum extent permitted by Utah law, LegisLink shall not be liable for indirect, incidental, consequential, or punitive damages. Total liability shall not exceed the amount paid by you for the Services in the twelve (12) months preceding the claim.
+
+9. TERMINATION
+LegisLink may suspend or terminate access to the Platform at any time for violation of these Terms or for operational or legal reasons. You may terminate your account at any time.
+
+10. GOVERNING LAW AND VENUE
+These Terms are governed exclusively by the laws of the State of Utah. Any legal action shall be brought in state or federal courts located in Utah.
+
+11. CONTACT INFORMATION
+LegisLink Ltd. Co.
+2072 N 3900 W
+Lehi, UT 84043
+support@legislink.us

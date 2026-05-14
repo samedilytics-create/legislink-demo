@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Legislink</title>
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://use.typekit.net/mvz0rhu.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <!-- Pico CSS -->
+    <link rel="icon" type="image/svg+xml" href="/static/Favicon-svg.svg">
+    <link rel="icon" type="image/png" sizes="48x48" href="/static/Favicon%2048.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/Favicon%2032.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/Favicon%2016.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/demo.css">
+    
+</head>
+<body>
+<div class="demo-banner" id="demo-banner">
+    Demo — Utah's 2027 session begins January. Live data returns then.
+    <a href="mailto:support@legislink.us">Contact us</a>.
+    <button class="demo-banner-close" id="demo-banner-close" aria-label="Dismiss">&times;</button>
+</div>
+    <nav class="container-fluid">
+        
+        
+        
+        <ul>
+            <li><a href="/">Home</a></li>
+            
+                <li><a href="/auth/login/">Login</a></li>
+                <li><a href="/auth/register/" role="button">Register</a></li>
+            
+        </ul>
+    </nav>
+
+    
+
+    <div class="flash-toasts">
+        
+            
+        
+    </div>
+    <script>
+        function closeFlashMessage(button) {
+            button.parentElement.remove();
+        }
+    </script>
+
+    <main class="container">
+        
+        
+                
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>Try the Legislink Demo</h1>
+            <p>No sign-up required — pick a role to explore.</p>
+        </div>
+
+        <article class="auth-card">
+            <div class="auth-role-buttons">
+                <button type="button" class="btn-primary auth-role-btn" data-demo-role="lobbyist">
+                    Try the Lobbyist Demo
+                </button>
+                <button type="button" class="btn-secondary auth-role-btn" data-demo-role="legislator">
+                    Try the Legislator Demo
+                </button>
+            </div>
+            <p class="auth-role-note">
+                Both demos use mock data and reset when you clear browser storage.
+                Switching roles wipes the in-progress demo for the other side.
+            </p>
+        </article>
+    </div>
+</div>
+
+        
+    </main>
+
+    
+    <div id="note-modal" class="flag-modal-overlay" data-open="false" role="dialog" aria-modal="true" aria-labelledby="note-modal-title">
+        <div class="flag-modal-content note-modal-content">
+            <div class="flag-modal-header">
+                <h3 id="note-modal-title">Internal Note</h3>
+                <button type="button" class="flag-modal-close" id="note-modal-close-btn" aria-label="Close">&times;</button>
+            </div>
+            <div class="flag-modal-body">
+                <p class="flag-modal-bill-number" id="note-modal-bill-number"></p>
+                <div class="note-modal-form">
+                    <div class="note-modal-row" id="note-modal-opinion-row" hidden>
+                        <label for="note-modal-opinion">Opinion</label>
+                        <select id="note-modal-opinion" name="opinion">
+                            <option value="">—</option>
+                            <option value="Strongly Oppose">Strongly Oppose</option>
+                            <option value="Oppose in Concept">Oppose in Concept</option>
+                            <option value="Neutral">Neutral</option>
+                            <option value="Endorse in Concept">Endorse in Concept</option>
+                            <option value="Strongly Endorse">Strongly Endorse</option>
+                        </select>
+                    </div>
+                    <div class="note-modal-row">
+                        <label for="note-modal-text">Note</label>
+                        <textarea id="note-modal-text" name="note" rows="5" placeholder="Add an internal note about this bill..."></textarea>
+                    </div>
+                </div>
+                <div class="flag-modal-actions">
+                    <button type="button" class="btn-secondary" id="note-modal-cancel-btn">Cancel</button>
+                    <button type="button" class="btn-primary" id="note-modal-save-btn">Save Note</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="flag-picker-modal" class="flag-modal-overlay" data-open="false" role="dialog" aria-modal="true" aria-labelledby="flag-modal-title">
+        <div class="flag-modal-content">
+            <div class="flag-modal-header">
+                <h3 id="flag-modal-title">Manage Flags</h3>
+                <button type="button" class="flag-modal-close" id="flag-modal-close-btn" aria-label="Close">&times;</button>
+            </div>
+            <div class="flag-modal-body">
+                <p class="flag-modal-bill-number" id="flag-modal-bill-number"></p>
+                <div class="flag-picker-grid">
+                    
+                    <label class="flag-checkbox-label">
+                        <input type="checkbox" data-flag-color="1">
+                        <span class="flag-color-preview flag-color-1">
+                            <span class="flag-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="3" y="2" width="2" height="20" fill="currentColor"/>
+                                    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" fill="currentColor"/>
+                                </svg>
+                            </span>
+                        </span>
+                        <span class="flag-label">Red</span>
+                    </label>
+                    
+                    <label class="flag-checkbox-label">
+                        <input type="checkbox" data-flag-color="2">
+                        <span class="flag-color-preview flag-color-2">
+                            <span class="flag-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="3" y="2" width="2" height="20" fill="currentColor"/>
+                                    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" fill="currentColor"/>
+                                </svg>
+                            </span>
+                        </span>
+                        <span class="flag-label">Yellow</span>
+                    </label>
+                    
+                    <label class="flag-checkbox-label">
+                        <input type="checkbox" data-flag-color="3">
+                        <span class="flag-color-preview flag-color-3">
+                            <span class="flag-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="3" y="2" width="2" height="20" fill="currentColor"/>
+                                    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" fill="currentColor"/>
+                                </svg>
+                            </span>
+                        </span>
+                        <span class="flag-label">Green</span>
+                    </label>
+                    
+                    <label class="flag-checkbox-label">
+                        <input type="checkbox" data-flag-color="4">
+                        <span class="flag-color-preview flag-color-4">
+                            <span class="flag-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="3" y="2" width="2" height="20" fill="currentColor"/>
+                                    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" fill="currentColor"/>
+                                </svg>
+                            </span>
+                        </span>
+                        <span class="flag-label">Blue</span>
+                    </label>
+                    
+                    <label class="flag-checkbox-label">
+                        <input type="checkbox" data-flag-color="5">
+                        <span class="flag-color-preview flag-color-5">
+                            <span class="flag-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="3" y="2" width="2" height="20" fill="currentColor"/>
+                                    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" fill="currentColor"/>
+                                </svg>
+                            </span>
+                        </span>
+                        <span class="flag-label">Purple</span>
+                    </label>
+                    
+                    <label class="flag-checkbox-label">
+                        <input type="checkbox" data-flag-color="6">
+                        <span class="flag-color-preview flag-color-6">
+                            <span class="flag-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="3" y="2" width="2" height="20" fill="currentColor"/>
+                                    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" fill="currentColor"/>
+                                </svg>
+                            </span>
+                        </span>
+                        <span class="flag-label">Black</span>
+                    </label>
+                    
+                </div>
+                <div class="flag-modal-actions">
+                    <button type="button" class="btn-secondary" id="flag-modal-cancel-btn">Cancel</button>
+                    <button type="button" class="btn-primary" id="flag-modal-save-btn">Save Flags</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+    
+    
+<script type="module" src="/static/js/demo.js"></script>
+</body>
+</html>

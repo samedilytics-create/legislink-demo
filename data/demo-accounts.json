@@ -1,0 +1,99 @@
+{
+  "lobbyist": {
+    "display_name": "Alex Chen",
+    "organization": "Mountain West Policy Group",
+    "email_display": "alex@mountainwestpolicy.example",
+    "tracked_bills": [
+      "HB0001",
+      "HB0142",
+      "SB0003",
+      "SB0042"
+    ],
+    "flags": {
+      "HB0142": "red",
+      "SB0042": "yellow"
+    },
+    "opinions": {
+      "HB0142": {
+        "stance": "Support in Concept",
+        "action": "Amend",
+        "comments": "Generally supportive — we'd like to see the cap raised in section 3.",
+        "savedAt": "2026-02-12T10:14:00Z"
+      }
+    },
+    "notes": {
+      "HB0142": [
+        {
+          "text": "Talked with Rep. Welton's office; open to amendment language.",
+          "editedAt": "2026-02-13T16:02:00Z",
+          "version": 2
+        }
+      ]
+    },
+    "flag_prefs": [
+      {
+        "color": "red",
+        "label": "Critical"
+      },
+      {
+        "color": "yellow",
+        "label": "Watch"
+      },
+      {
+        "color": "green",
+        "label": "Support"
+      }
+    ]
+  },
+  "legislator": {
+    "display_name": "Rep. Jordan Smith",
+    "district": "Demo-1",
+    "party": "D",
+    "house": "H",
+    "counties": "Demo County",
+    "tracked_bills": [
+      "HB0142",
+      "HB0220"
+    ],
+    "flags": {},
+    "opinions": {},
+    "notes": {},
+    "flag_prefs": [
+      {
+        "color": "red",
+        "label": "Constituent priority"
+      },
+      {
+        "color": "yellow",
+        "label": "Open question"
+      }
+    ]
+  },
+  "fake_orgs": [
+    "Mountain West Policy Group",
+    "Beehive Civic Forum",
+    "Utah Education Alliance",
+    "Wasatch Business Council",
+    "Salt Lake Civic Trust",
+    "North Wasatch Coalition",
+    "Bonneville Reform Council",
+    "Cache Valley Voters",
+    "Provo Neighborhood Alliance",
+    "Iron County Trades Council",
+    "Greater Ogden Civic League",
+    "Capitol Reef Conservation Group",
+    "Utah Small Business Federation",
+    "Statewide Renters Association",
+    "Park City Open Lands Project",
+    "Dixie Ratepayers Coalition",
+    "Wasatch Front Transit Riders",
+    "Utah Library Defenders",
+    "Beehive Tech & Privacy Council",
+    "St. George Civic Roundtable",
+    "Davis County Parents Network",
+    "Utah Rural Health Association",
+    "Cottonwood Heights Civic Club",
+    "Sevier Valley Farmers Coalition",
+    "Greater Logan Workforce Alliance"
+  ]
+}

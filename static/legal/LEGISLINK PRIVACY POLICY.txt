@@ -1,0 +1,58 @@
+LEGISLINK PRIVACY POLICY
+Effective Date: 01/19/2026
+
+This Privacy Policy describes how LegisLink Ltd. Co., a Utah limited liability company (“LegisLink,” “we,” “us,” or “our”), collects, uses, and protects information obtained through the LegisLink platform (“Platform”).
+
+By creating an account and checking the acceptance box during signup, you consent to this Privacy Policy.
+
+1. INFORMATION WE COLLECT
+We may collect:
+- Account information such as name, email address, and organization
+- Legislative tracking data, bill selections, notes, and annotations
+- Usage data related to how you interact with the Platform
+- Communications you send to LegisLink
+
+2. HOW WE USE INFORMATION
+We use collected information to:
+- Operate and maintain the Platform
+- Provide legislative tracking, summaries, and alerts
+- Improve Platform functionality and services
+- Develop enhanced legislative analysis and features
+- Communicate with users regarding accounts or updates
+
+3. NO DISCLOSURE OF CONTACT INFORMATION
+LegisLink does not sell, rent, or disclose user contact information to any third parties.
+
+We do not share personally identifiable contact information for marketing or commercial purposes.
+
+4. USE OF PLATFORM DATA
+Information entered into the Platform may be:
+- Used internally to improve services
+- Aggregated and anonymized for analytics and feature development
+- Incorporated into legislative summaries and analytical tools
+
+No personally identifiable contact information will be publicly disclosed.
+
+5. LEGAL REQUIREMENTS
+Information may be disclosed if required by law, court order, or valid legal process under Utah or federal law.
+
+6. DATA SECURITY
+LegisLink employs reasonable administrative, technical, and organizational safeguards to protect information. However, no system can be guaranteed to be completely secure.
+
+7. DATA RETENTION
+Information is retained as long as necessary to provide the Platform, comply with legal obligations, and enforce agreements.
+
+8. USER RIGHTS
+You may request access to, correction of, or deletion of your account information, subject to applicable legal requirements.
+
+9. CHILDREN’S PRIVACY
+The Platform is not intended for individuals under 18 years of age. LegisLink does not knowingly collect information from minors.
+
+10. GOVERNING LAW
+This Privacy Policy is governed by the laws of the State of Utah.
+
+11. CONTACT INFORMATION
+LegisLink Ltd. Co.
+2072 N 3900 W
+Lehi, UT 84043
+support@legislink.us
