@@ -91,3 +91,32 @@ def test_clean_input_passes():
     tables = {"bill": [{"id": "1", "title": "School Funding Amendments"}]}
     out = sanitize(tables, real_user_names={"Alice Stevens"})
     assert out["bill"][0]["title"] == "School Funding Amendments"
+
+
+def test_public_record_fields_exempt_from_name_scan():
+    """Legislator names in public bill-sponsor / legislator-record fields are not leaks."""
+    tables = {
+        "bill": [{"id": "1", "sponsor": "Rep. Welton, Doug", "title": "Some Title"}],
+        "legislator": [{"id": "100", "username": "WELTOD", "district": "8"}],
+    }
+    # Should NOT raise even though "Doug Welton" / "Welton" / "Doug" are real users.
+    out = sanitize(tables, real_user_names={"Doug Welton", "Welton, Doug", "WELTOD"})
+    assert out["bill"][0]["sponsor"] == "Rep. Welton, Doug"
+
+
+def test_name_in_non_exempt_field_still_raises():
+    """A real user name in a non-public field must still be flagged."""
+    import pytest
+    from build.sanitize import SecretLeak
+    tables = {"bill": [{"id": "1", "title": "Bill about Doug Welton"}]}
+    with pytest.raises(SecretLeak, match="user name"):
+        sanitize(tables, real_user_names={"Doug Welton"})
+
+
+def test_email_still_scanned_in_public_record_table():
+    """Public-record exemption is name-only; emails must still trip the scanner."""
+    import pytest
+    from build.sanitize import SecretLeak
+    tables = {"legislator": [{"id": "100", "legislator_url": "mailto:foo@example.com"}]}
+    with pytest.raises(SecretLeak, match="email"):
+        sanitize(tables, real_user_names=set())

@@ -53,6 +53,23 @@ _DENYLIST = (
     "*SnIc62-540-3044",
 )
 
+# Tables whose rows are public legislative metadata. Legislator names appear
+# here by design, so we exempt them from the real-user-name scan. Email and
+# denylist scans still apply to these tables.
+_PUBLIC_RECORD_TABLES = frozenset({
+    "legislator",
+    "committee",
+    "committee_meeting",
+    "committee_membership",
+})
+
+# Specific fields in otherwise-private tables where legislator names appear
+# as published legislative record (bill sponsors are on the public bill itself).
+_PUBLIC_RECORD_FIELDS = frozenset({
+    ("bill", "sponsor"),
+    ("bill", "floor_sponsor"),
+})
+
 
 def _fake_org_for(real_id):
     if real_id is None:
@@ -83,6 +100,12 @@ def _scan(tables: dict[str, list[dict]], real_user_names: set[str]) -> None:
                         raise SecretLeak(
                             f"denylisted substring '{needle}' in {table}.{col}"
                         )
+                # Public legislative-record fields contain legislator names by
+                # design; skip the name guard there but keep email/denylist scans.
+                if table in _PUBLIC_RECORD_TABLES:
+                    continue
+                if (table, col) in _PUBLIC_RECORD_FIELDS:
+                    continue
                 for name in real_user_names:
                     if name and name in val:
                         raise SecretLeak(
