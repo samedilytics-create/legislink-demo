@@ -113,6 +113,15 @@ def main() -> None:
     render_page(env, "index.html", args.out / "index.html",
                 endpoint="index", user=None, **landing_ctx)
 
+    for tmpl, out_path in [
+        ("auth/login.html",                "auth/login/index.html"),
+        ("auth/register.html",             "auth/register/index.html"),
+        ("auth/choose_account_type.html",  "auth/choose-account-type/index.html"),
+        ("auth/forgot_password.html",      "auth/forgot-password/index.html"),
+    ]:
+        render_page(env, tmpl, args.out / out_path,
+                    endpoint="auth.login", user=None)
+
     print("Done.")
 
 
