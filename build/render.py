@@ -7,7 +7,7 @@ from build.flask_shim import DemoUser, make_globals
 
 # Resolved relative to the legislink-demo repo root.
 REPO_ROOT = Path(__file__).resolve().parent.parent
-FLASK_TEMPLATES = REPO_ROOT.parent / "Legislink-2026-backup" / "app" / "templates"
+FLASK_TEMPLATES = REPO_ROOT.parent / "Lobbi" / "app" / "templates"
 OVERLAY_TEMPLATES = REPO_ROOT / "overlays" / "templates"
 
 

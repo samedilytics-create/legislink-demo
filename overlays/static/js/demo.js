@@ -3,7 +3,7 @@ import { attachAuth } from "./demo-auth.js";
 import {
     hydrateBillTable, hydrateBillDetail, loadData,
     renderFlagCell, renderNoteCell,
-    hydrateAgendaCard, hydrateUpcomingMeetings,
+    hydrateAgendaCard, hydrateMeetingsCalendar,
 } from "./demo-hydrate.js";
 import { attachRouter } from "./demo-router.js";
 
@@ -33,38 +33,100 @@ function requireSignIn(expectedAccount) {
     return true;
 }
 
-// --- Flag picker modal ---
-function openFlagPicker(billId) {
-    const overlay = document.getElementById("flag-picker-modal");
-    if (!overlay) return;
-    overlay.dataset.bill = billId;
-    overlay.querySelector("#flag-modal-bill-number").textContent = billId;
+// --- Flag picker popover ---
+const FLAG_POPOVER_COLORS = [
+    { num: 1, name: "Red",    color: "#ef4444" },
+    { num: 2, name: "Yellow", color: "#f59e0b" },
+    { num: 3, name: "Green",  color: "#22c55e" },
+    { num: 4, name: "Blue",   color: "#3b82f6" },
+    { num: 5, name: "Purple", color: "#a855f7" },
+    { num: 6, name: "Black",  color: "#374151" },
+];
+
+const FLAG_POPOVER_SVG = `<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">`
+    + `<rect x="3" y="2" width="2" height="20" fill="currentColor"/>`
+    + `<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" fill="currentColor"/>`
+    + `</svg>`;
+
+let _flagPopover = null;
+
+function getFlagPopover() {
+    if (_flagPopover) return _flagPopover;
+    const el = document.createElement("div");
+    el.id = "flag-popover";
+    el.className = "flag-popover";
+    el.hidden = true;
+    el.setAttribute("role", "dialog");
+    el.setAttribute("aria-label", "Choose flag color");
+    el.innerHTML = `<div class="flag-popover-swatches">${
+        FLAG_POPOVER_COLORS.map(c =>
+            `<button type="button" class="flag-popover-swatch" data-color="${c.num}"
+                     style="color:${c.color}" aria-label="${c.name}">${FLAG_POPOVER_SVG}</button>`
+        ).join("")
+    }</div>`;
+    document.body.appendChild(el);
+    _flagPopover = el;
+    return el;
+}
+
+function openFlagPicker(billId, triggerEl) {
+    const pop = getFlagPopover();
+    pop.dataset.bill = billId;
+
+    // Mark which swatches are currently active
     const current = state.getFlags(billId);
-    overlay.querySelectorAll('input[type="checkbox"][data-flag-color]').forEach(cb => {
-        const c = parseInt(cb.dataset.flagColor, 10);
-        cb.checked = current.includes(c);
+    pop.querySelectorAll(".flag-popover-swatch").forEach(btn => {
+        btn.classList.toggle("flag-popover-swatch--active", current.includes(parseInt(btn.dataset.color, 10)));
     });
-    overlay.dataset.open = "true";
+
+    // Position to the right of the trigger, vertically centred on it
+    pop.hidden = false;
+    const tr = triggerEl.getBoundingClientRect();
+    const pr = pop.getBoundingClientRect();
+    let top = tr.top + window.scrollY + tr.height / 2 - pr.height / 2;
+    let left = tr.right + window.scrollX + 8;
+    // Keep within viewport horizontally
+    if (left + pr.width > window.innerWidth - 8) left = tr.left + window.scrollX - pr.width - 8;
+    pop.style.top = `${top}px`;
+    pop.style.left = `${left}px`;
+
+    // Defer outside-click listener so this same click doesn't immediately close it
+    requestAnimationFrame(() => {
+        document.addEventListener("click", _flagPopoverOutsideClick, true);
+        document.addEventListener("keydown", _flagPopoverKeydown);
+    });
 }
 
 function closeFlagPicker() {
-    const overlay = document.getElementById("flag-picker-modal");
-    if (!overlay) return;
-    overlay.dataset.open = "false";
-    delete overlay.dataset.bill;
+    if (!_flagPopover) return;
+    _flagPopover.hidden = true;
+    delete _flagPopover.dataset.bill;
+    document.removeEventListener("click", _flagPopoverOutsideClick, true);
+    document.removeEventListener("keydown", _flagPopoverKeydown);
 }
 
-function saveFlagPicker() {
-    const overlay = document.getElementById("flag-picker-modal");
-    if (!overlay) return;
-    const billId = overlay.dataset.bill;
+function _flagPopoverOutsideClick(e) {
+    if (_flagPopover && !_flagPopover.contains(e.target)) closeFlagPicker();
+}
+
+function _flagPopoverKeydown(e) {
+    if (e.key === "Escape") closeFlagPicker();
+}
+
+// Swatch click: toggle that colour, save, close
+document.addEventListener("click", e => {
+    const swatch = e.target.closest(".flag-popover-swatch");
+    if (!swatch || !_flagPopover || _flagPopover.hidden) return;
+    const billId = _flagPopover.dataset.bill;
     if (!billId) return;
-    const selected = Array.from(overlay.querySelectorAll('input[type="checkbox"][data-flag-color]:checked'))
-        .map(cb => parseInt(cb.dataset.flagColor, 10));
-    state.setFlags(billId, selected);
+    const colorNum = parseInt(swatch.dataset.color, 10);
+    const current = state.getFlags(billId);
+    // Single-select: clicking the active flag clears it; clicking any other sets it exclusively.
+    const updated = current.length === 1 && current[0] === colorNum ? [] : [colorNum];
+    state.setFlags(billId, updated);
     refreshFlagCell(billId);
     closeFlagPicker();
-}
+});
 
 function refreshFlagCell(billId) {
     const colors = state.getFlags(billId);
@@ -156,19 +218,6 @@ function wireBillTableSearch() {
     update();
 }
 
-function attachFlagPickerModal() {
-    const overlay = document.getElementById("flag-picker-modal");
-    if (!overlay) return;
-    overlay.addEventListener("click", e => {
-        if (e.target === overlay) closeFlagPicker();
-    });
-    overlay.querySelector("#flag-modal-close-btn")?.addEventListener("click", closeFlagPicker);
-    overlay.querySelector("#flag-modal-cancel-btn")?.addEventListener("click", closeFlagPicker);
-    overlay.querySelector("#flag-modal-save-btn")?.addEventListener("click", saveFlagPicker);
-    document.addEventListener("keydown", e => {
-        if (e.key === "Escape" && overlay.dataset.open === "true") closeFlagPicker();
-    });
-}
 
 // --- Write-action click delegation ---
 function attachWriteActions() {
@@ -190,7 +239,7 @@ function attachWriteActions() {
         if (btn.dataset.action === "open-flag-picker") {
             e.preventDefault();
             e.stopPropagation();
-            openFlagPicker(billId);
+            openFlagPicker(billId, btn);
         }
         if (btn.dataset.action === "open-note") {
             e.preventDefault();
@@ -244,12 +293,11 @@ async function main() {
         });
         // Fire-and-forget; cards live independently of the bill table.
         hydrateAgendaCard({ account });
-        hydrateUpcomingMeetings("#upcoming-items-list");
+        hydrateMeetingsCalendar("#meetings-calendar");
     }
 
     attachRouter();
     attachWriteActions();
-    attachFlagPickerModal();
     attachNoteModal();
 }
 

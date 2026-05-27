@@ -109,7 +109,7 @@ def main() -> None:
     if static_dst.exists():
         shutil.rmtree(static_dst)
     shutil.copytree(
-        repo_root.parent / "Legislink-2026-backup" / "app" / "static",
+        repo_root.parent / "Lobbi" / "app" / "static",
         static_dst,
     )
     overlay_static = repo_root / "overlays" / "static"

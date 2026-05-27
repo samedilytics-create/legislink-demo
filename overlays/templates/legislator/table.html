@@ -7,11 +7,10 @@
 {% endblock %}
 
 {% block content %}
-<header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+<header style="margin-bottom: 0.75rem;">
     <h1 style="margin: 0;">All Bills</h1>
-    <input type="search" id="bill-table-search" placeholder="Search by number, title, sponsor..."
-           style="max-width: 360px;">
 </header>
+<p id="bill-table-search-status" style="font-size: 0.8rem; color: #666; margin: 0 0 0.6rem;"></p>
 
 <table class="bills-table" style="width: 100%; border-collapse: collapse;">
     <thead>

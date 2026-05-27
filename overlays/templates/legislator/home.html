@@ -10,10 +10,10 @@
 <section>
     <div class="dashboard-grid legislator-dashboard">
         <div class="dashboard-card agenda-card" style="flex-direction: column; align-items: stretch; justify-content: flex-start;">
-            <div class="card-header" style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 1rem;">
-                <h3 class="card-title" style="margin: 0;">Agendas</h3>
+            <div class="card-header" style="display: flex; align-items: stretch; gap: 1.5rem; margin-bottom: 1rem;">
+                <span class="card-title" style="display: flex; align-items: center;">Agendas</span>
                 <select id="agenda-select"
-                        style="font-family: 'Public Sans', sans-serif; font-size: 14px; color: #272727; padding: 0.4rem 0.7rem; margin-left: 24px; border: 1px solid #d0d0d0; border-radius: 6px; background: #fff; cursor: pointer;">
+                        style="font-family: 'Public Sans', sans-serif; font-size: 14px; color: #272727; padding: 0.4rem 0.7rem; margin: 0; border: 1px solid #d0d0d0; border-radius: 6px; background: #fff; cursor: pointer;">
                     <option value="">Select an agenda</option>
                 </select>
             </div>
@@ -23,17 +23,16 @@
         </div>
 
         <div class="dashboard-card upcoming-card" style="flex-direction: column; align-items: stretch; justify-content: flex-start;">
-            <div class="card-header" style="margin-bottom: 1rem;">
-                <h3 class="card-title" style="margin: 0;">Upcoming Meetings</h3>
+            <div class="card-header" style="margin-bottom: 0.5rem;">
+                <h3 class="card-title" style="margin: 0;">My Meetings</h3>
             </div>
-            <div class="upcoming-items-list" id="upcoming-items-list" style="flex: 1; overflow-y: auto;">
+            <div id="meetings-calendar">
                 <p style="color: #666; font-size: 14px; margin: 0;">Loading…</p>
             </div>
         </div>
 
         <div class="dashboard-card dashboard-card-full tracked-bills-card" style="flex-direction: column; align-items: stretch;">
-            <h2 style="margin-top: 0;">My Bills</h2>
-            <p style="font-size:0.85rem;color:#666;margin-top:0;">Bills you sponsor, co-sponsor, or have tracked.</p>
+            <h2 style="margin-top: 0; margin-bottom: 0.6rem;">Tracked Bills</h2>
             <table class="tracked-bills-table" style="width: 100%; border-collapse: collapse;">
                 <thead>
                     <tr>
