@@ -1,4 +1,8 @@
-"""Generate tests/fixtures/sample_dump.sql with realistic dummy data."""
+"""Generate tests/fixtures/sample_dump.sql with realistic dummy data.
+
+Run by hand (``python gen_fixture.py``) when the fixture needs to be regenerated;
+not invoked by the build.
+"""
 from pathlib import Path
 
 NULL = "\\N"

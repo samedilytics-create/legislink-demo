@@ -32,6 +32,13 @@ const OPINION_LABELS = {
     support_in_concept: "Endorse in Concept",
     strongly_support:   "Strongly Endorse",
 };
+const OPINION_COLORS = {
+    "strongly-oppose":    "#dc3545",
+    "oppose-in-concept":  "#b87784",
+    "neutral":            "#c3a96f",
+    "endorse-in-concept": "#43a047",
+    "strongly-endorse":   "#2e7d32",
+};
 const OPINION_ORDER = [
     "Strongly Oppose",
     "Oppose in Concept",
@@ -426,14 +433,6 @@ export async function hydrateAgendaCard(opts = {}) {
             const labelParts = [date, a.committeeName].filter(Boolean);
             return `<option value="${escapeAttr(a.key)}">${escapeAttr(labelParts.join(" — "))}</option>`;
         }).join("");
-
-    const OPINION_COLORS = {
-        "strongly-oppose":    "#dc3545",
-        "oppose-in-concept":  "#b87784",
-        "neutral":            "#c3a96f",
-        "endorse-in-concept": "#43a047",
-        "strongly-endorse":   "#2e7d32",
-    };
 
     const billByNumber = new Map(bills.map(b => [b.bill_number, b]));
     select.addEventListener("change", () => {

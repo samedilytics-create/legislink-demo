@@ -80,7 +80,8 @@ function openFlagPicker(billId, triggerEl) {
         btn.classList.toggle("flag-popover-swatch--active", current.includes(parseInt(btn.dataset.color, 10)));
     });
 
-    // Position to the right of the trigger, vertically centred on it
+    // Reveal off-screen first so we can measure dimensions without a one-frame flash at (0,0).
+    pop.style.visibility = "hidden";
     pop.hidden = false;
     const tr = triggerEl.getBoundingClientRect();
     const pr = pop.getBoundingClientRect();
@@ -90,6 +91,7 @@ function openFlagPicker(billId, triggerEl) {
     if (left + pr.width > window.innerWidth - 8) left = tr.left + window.scrollX - pr.width - 8;
     pop.style.top = `${top}px`;
     pop.style.left = `${left}px`;
+    pop.style.visibility = "";
 
     // Defer outside-click listener so this same click doesn't immediately close it
     requestAnimationFrame(() => {
@@ -295,6 +297,7 @@ async function main() {
             account,
             filter: (b, s) => s.trackedBills.includes(b.bill_number),
         });
+        wireBillTableSearch();
         // Fire-and-forget; cards live independently of the bill table.
         hydrateAgendaCard({ account });
         hydrateMeetingsCalendar("#meetings-calendar");
@@ -308,7 +311,9 @@ async function main() {
 
 main().catch(err => console.error("demo.js bootstrap failed", err));
 
-// Move logout to the bottom of the mobile menu (runs after main.js's DOMContentLoaded handler)
+// Move logout to the bottom of the mobile menu (runs after main.js's DOMContentLoaded handler).
+// Coupled to the mobile-menu-content structure built by main.js: first <ul> holds top items,
+// last <ul> holds bottom items. If main.js restructures the menu, this becomes a no-op.
 document.addEventListener("DOMContentLoaded", () => {
     const nav = document.querySelector(".mobile-menu-content nav");
     if (!nav) return;
