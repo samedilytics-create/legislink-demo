@@ -32,6 +32,13 @@ const OPINION_LABELS = {
     support_in_concept: "Endorse in Concept",
     strongly_support:   "Strongly Endorse",
 };
+const OPINION_COLORS = {
+    "strongly-oppose":    "#dc3545",
+    "oppose-in-concept":  "#b87784",
+    "neutral":            "#c3a96f",
+    "endorse-in-concept": "#43a047",
+    "strongly-endorse":   "#2e7d32",
+};
 const OPINION_ORDER = [
     "Strongly Oppose",
     "Oppose in Concept",
@@ -434,6 +441,7 @@ export async function hydrateAgendaCard(opts = {}) {
             list.innerHTML = `<p class="agenda-placeholder" style="color:#666;font-size:14px;margin:0;min-height:180px;display:flex;align-items:center;justify-content:center;">Select an agenda</p>`;
             return;
         }
+        const s = state.get();
         const rows = a.bills.map(bn => {
             const inDemo = billNumbers.has(bn);
             const b = billByNumber.get(bn);
@@ -441,15 +449,188 @@ export async function hydrateAgendaCard(opts = {}) {
             const bnCell = inDemo
                 ? `<a href="/${account}/bill/#/${escapeAttr(bn)}">${escapeAttr(bn)}</a>`
                 : escapeAttr(bn);
-            return `<tr>
-                <td style="padding:0.35rem 0.5rem;font-size:13px;font-weight:600;color:#3d52d5;">${bnCell}</td>
-                <td style="padding:0.35rem 0.5rem;font-size:13px;color:${inDemo ? "#272727" : "#888"};">${escapeAttr(titleText)}</td>
+
+            const note = s.notes[bn] || null;
+            const opinionSlug = note?.opinion
+                ? note.opinion.toLowerCase().replace(/\s+/g, "-")
+                : "";
+            const opinionColor = OPINION_COLORS[opinionSlug] || "#555";
+            const opinionHtml = note?.opinion
+                ? `<span class="agenda-note-opinion" style="color:${opinionColor}">${escapeAttr(note.opinion)}</span>`
+                : "";
+            const noteTextHtml = note?.text
+                ? `<span class="agenda-note-text">${escapeAttr(note.text)}</span>`
+                : "";
+            const noteDisplay = (opinionHtml || noteTextHtml)
+                ? `<div class="agenda-note-display">${opinionHtml}${noteTextHtml}</div>`
+                : "";
+
+            return `<tr data-bill="${escapeAttr(bn)}">
+                <td style="padding:0.35rem 0.5rem;font-size:13px;font-weight:600;color:#3d52d5;white-space:nowrap;vertical-align:top;">${bnCell}</td>
+                <td style="padding:0.35rem 0.5rem;font-size:13px;color:${inDemo ? "#272727" : "#888"};vertical-align:top;">${escapeAttr(titleText)}</td>
+                <td style="padding:0.35rem 0.5rem;vertical-align:top;">${noteDisplay}</td>
+                <td class="note-cell" style="padding:0.35rem 0.25rem;width:32px;vertical-align:top;">${renderNoteCell(bn, note)}</td>
             </tr>`;
         }).join("");
-        list.innerHTML = `<table style="width:100%;border-collapse:collapse;">
-            <tbody>${rows}</tbody>
-        </table>`;
+        list.innerHTML = `<table style="width:100%;border-collapse:collapse;"><tbody>${rows}</tbody></table>`;
     });
+}
+
+export async function hydrateMeetingsCalendar(rootSelector) {
+    const root = document.querySelector(rootSelector);
+    if (!root) return;
+
+    const { committees, bills } = await loadData();
+    const all = meetingsWithBills(committees);
+    const trackedSet = new Set(state.get().trackedBills || []);
+    const billTitleById = new Map((bills || []).map(b => [b.bill_number, b.title || ""]));
+
+    const START_HOUR = 7;
+    const END_HOUR = 19;
+    const PX_PER_HOUR = 52;
+    const GRID_HEIGHT = (END_HOUR - START_HOUR) * PX_PER_HOUR;
+
+    const todayMidnight = new Date();
+    todayMidnight.setHours(0, 0, 0, 0);
+
+    function dateKey(d) {
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    }
+
+    const todayKey = dateKey(todayMidnight);
+
+    // Anchor to the first date that has an upcoming meeting (>= today).
+    // Fall back to today if all meetings are in the past.
+    const futureDates = [...new Set(
+        all
+            .map(m => meetingTimestamp(m))
+            .filter(ts => ts >= todayMidnight.getTime())
+            .map(ts => dateKey(new Date(ts)))
+    )].sort();
+    const anchorKey = futureDates[0] || todayKey;
+    const anchorDate = new Date(`${anchorKey}T00:00:00`);
+
+    // Show 3 consecutive calendar days starting from the anchor date.
+    const days = [0, 1, 2].map(n => {
+        const d = new Date(anchorDate);
+        d.setDate(d.getDate() + n);
+        return d;
+    });
+
+    const byDate = {};
+    for (const m of all) {
+        const ts = meetingTimestamp(m);
+        if (!ts) continue;
+        const key = dateKey(new Date(ts));
+        if (!byDate[key]) byDate[key] = [];
+        byDate[key].push(m);
+    }
+
+    function topPx(h, min) {
+        return ((h - START_HOUR) + min / 60) * PX_PER_HOUR;
+    }
+
+    function hourLabel(h) {
+        if (h === 12) return "12pm";
+        return h < 12 ? `${h}am` : `${h - 12}pm`;
+    }
+
+    const hourLabels = [];
+    for (let h = START_HOUR; h <= END_HOUR; h++) {
+        hourLabels.push(`<div class="cal-hour-label" style="top:${topPx(h, 0)}px">${hourLabel(h)}</div>`);
+    }
+
+    const now = new Date();
+    const nowKey = dateKey(now);
+    const nowH = now.getHours();
+    const nowMin = now.getMinutes();
+    const nowVisible = nowH >= START_HOUR && nowH < END_HOUR;
+    const nowTop = topPx(nowH, nowMin);
+
+    const dayCols = days.map(day => {
+        const key = dateKey(day);
+        const isToday = key === todayKey;
+        const dayMeetings = (byDate[key] || []).sort((a, b) => meetingTimestamp(a) - meetingTimestamp(b));
+
+        const gridLines = [];
+        for (let h = START_HOUR; h <= END_HOUR; h++) {
+            gridLines.push(`<div class="cal-hour-line" style="top:${topPx(h, 0)}px"></div>`);
+        }
+
+        const events = dayMeetings.map(m => {
+            const ts = meetingTimestamp(m);
+            const d = new Date(ts);
+            const h = d.getHours();
+            const min = d.getMinutes();
+            if (h < START_HOUR || h >= END_HOUR) return "";
+            const top = topPx(h, min);
+            const timeStr = d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+            const place = m.meeting_place ? `<div class="cal-event-place">${escapeAttr(m.meeting_place)}</div>` : "";
+
+            const tracked = parseBillIdsField(m.bill_ids)
+                .map(normalizeBillNumber)
+                .filter(bn => trackedSet.has(bn));
+            const trackedHtml = tracked.length
+                ? `<div class="cal-event-bills">${tracked.map(bn => {
+                    const title = billTitleById.get(bn) || "";
+                    const label = title ? `${escapeAttr(bn)} – ${escapeAttr(title)}` : escapeAttr(bn);
+                    return `<span class="cal-event-bill">${label}</span>`;
+                }).join("")}</div>`
+                : "";
+
+            const height = Math.max(PX_PER_HOUR, PX_PER_HOUR + tracked.length * 16);
+            return `<div class="cal-event" style="top:${top}px;height:${height}px">
+                <div class="cal-event-time">${escapeAttr(timeStr)}</div>
+                <div class="cal-event-name">${escapeAttr(m.committeeName || "")}</div>
+                ${place}${trackedHtml}
+            </div>`;
+        }).join("");
+
+        const nowLine = (isToday && nowVisible)
+            ? `<div class="cal-now-line" style="top:${nowTop}px"><span class="cal-now-dot"></span></div>`
+            : "";
+
+        const headerCls = isToday ? "cal-day-header cal-day-header--today" : "cal-day-header";
+        const dayLabel = day.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+
+        return `<div class="cal-day-col">
+            <div class="${headerCls}">${dayLabel}</div>
+            <div class="cal-day-body" style="height:${GRID_HEIGHT}px">${gridLines.join("")}${events}${nowLine}</div>
+        </div>`;
+    });
+
+    root.innerHTML = `<div class="cal-scroll">
+        <div class="cal-grid">
+            <div class="cal-time-col">
+                <div class="cal-time-header"></div>
+                <div class="cal-time-labels" style="height:${GRID_HEIGHT}px;position:relative;">${hourLabels.join("")}</div>
+            </div>
+            ${dayCols.join("")}
+        </div>
+    </div>`;
+
+    // Scroll to show the current-time line if viewing today, otherwise scroll
+    // to the earliest meeting in the visible window (or 8am as a fallback).
+    const scrollEl = root.querySelector(".cal-scroll");
+    if (scrollEl) {
+        let scrollTarget;
+        if (anchorKey === todayKey && nowVisible) {
+            scrollTarget = nowTop;
+        } else {
+            const firstMeetingTs = days
+                .flatMap(d => byDate[dateKey(d)] || [])
+                .map(m => meetingTimestamp(m))
+                .filter(Boolean)
+                .sort((a, b) => a - b)[0];
+            if (firstMeetingTs) {
+                const d = new Date(firstMeetingTs);
+                scrollTarget = topPx(d.getHours(), d.getMinutes());
+            } else {
+                scrollTarget = topPx(8, 0);
+            }
+        }
+        scrollEl.scrollTop = Math.max(0, scrollTarget - 80);
+    }
 }
 
 export async function hydrateBillDetail(rootSelector) {
