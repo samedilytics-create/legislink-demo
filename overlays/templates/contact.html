@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Sales — Legislink{% endblock %}
+
+{% block content %}
+<div class="contact-page">
+    <div class="contact-hero">
+        <h1>Talk To Sales</h1>
+        <p>Ready to see Legislink in action? Reach out and we'll set up a personalized demo for your team.</p>
+    </div>
+
+    <div class="contact-form-card">
+        <form class="contact-form" action="mailto:support@legislink.us" method="POST" enctype="text/plain">
+            <div class="contact-form-row">
+                <label for="contact-name">Name</label>
+                <input type="text" id="contact-name" name="Name" placeholder="Jane Smith" required>
+            </div>
+            <div class="contact-form-row">
+                <label for="contact-group">Organization / Group</label>
+                <input type="text" id="contact-group" name="Organization" placeholder="Utah Association of Counties">
+            </div>
+            <div class="contact-form-row">
+                <label for="contact-phone">Phone Number</label>
+                <input type="tel" id="contact-phone" name="Phone" placeholder="(801) 555-0100">
+            </div>
+            <div class="contact-form-row">
+                <label for="contact-email">Email</label>
+                <input type="email" id="contact-email" name="Email" placeholder="jane@example.com" required>
+            </div>
+            <div class="contact-form-consent">
+                <label class="consent-label">
+                    <input type="checkbox" id="contact-consent" name="Consent" required>
+                    <span>I agree to be contacted by the Legislink team about my inquiry.</span>
+                </label>
+            </div>
+            <button type="submit" class="btn-lp-cta contact-submit">Send Message</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

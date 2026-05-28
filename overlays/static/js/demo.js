@@ -6,6 +6,7 @@ import {
     hydrateAgendaCard, hydrateMeetingsCalendar,
 } from "./demo-hydrate.js";
 import { attachRouter } from "./demo-router.js";
+import { startHomeTour, startTableTour } from "./tour.js";
 
 // --- Demo banner ---
 function attachBanner() {
@@ -285,6 +286,9 @@ async function main() {
     ) {
         await hydrateBillTable("#bill-table-body", { account });
         wireBillTableSearch();
+        if (path === "/lobbyist/table/" || path === "/legislator/table/") {
+            startTableTour(account);
+        }
     }
     if (path === "/lobbyist/" || path === "/legislator/") {
         await hydrateBillTable("#bill-table-body", {
@@ -294,6 +298,7 @@ async function main() {
         // Fire-and-forget; cards live independently of the bill table.
         hydrateAgendaCard({ account });
         hydrateMeetingsCalendar("#meetings-calendar");
+        startHomeTour(account);
     }
 
     attachRouter();
@@ -302,3 +307,17 @@ async function main() {
 }
 
 main().catch(err => console.error("demo.js bootstrap failed", err));
+
+// Move logout to the bottom of the mobile menu (runs after main.js's DOMContentLoaded handler)
+document.addEventListener("DOMContentLoaded", () => {
+    const nav = document.querySelector(".mobile-menu-content nav");
+    if (!nav) return;
+    const uls = nav.querySelectorAll("ul");
+    if (uls.length < 2) return;
+    const firstUl = uls[0];
+    const lastUl = uls[uls.length - 1];
+    const logoutLi = Array.from(firstUl.querySelectorAll("li")).find(
+        li => li.textContent.trim().includes("Logout")
+    );
+    if (logoutLi) lastUl.appendChild(logoutLi);
+});

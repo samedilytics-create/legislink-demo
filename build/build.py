@@ -175,6 +175,8 @@ def main() -> None:
         render_page(env, tmpl, args.out / out_path,
                     endpoint=endpoint, user=legislator_user, **portal_ctx)
 
+    render_page(env, "contact.html", args.out / "contact" / "index.html",
+                endpoint="contact", user=None)
     render_page(env, "404.html", args.out / "404.html",
                 endpoint="index", user=None)
     (args.out / "CNAME").write_text("legislink.us\n")
